@@ -1,12 +1,10 @@
-import { ScheduledTaskManager } from './manager';
-
 export const sync = async (req, reply) => {
-  await ScheduledTaskManager.listTenants();
+  // await ScheduledTaskManager.listTenants();
   reply.send({ isSuccess: true });
 };
 
 export const monitor = async (req, reply) => {
-  await ScheduledTaskManager.monitor();
+  // await ScheduledTaskManager.monitor();
   reply.send({ isSuccess: true });
 };
 

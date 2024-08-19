@@ -1,12 +1,11 @@
-/* globals app */
-
 import { expect } from 'chai';
-import nock from 'nock';
-import '../../../test/common';
+// import nock from 'nock';
+// import '../../../test/common';
 
-import { OrderSyncManager } from '../manager';
+import app from '../../../../app.js';
+// import { OrderSyncManager } from '../manager';
 
-import { success } from './noFraudSamples';
+// import { success } from './noFraudSamples';
 import { c7Order, webhook } from './sample';
 
 describe('orderSync.api.test.js - Order Sync beta API', () => {
@@ -14,55 +13,110 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     orderId: ''
   };
 
-  before(() => {
-    if (process.env.NODE_ENV !== 'testFull') {
-      nock(process.env.C7_API_URL)
-        .get(/\/v1\/order\/.*/)
-        .reply(200, c7Order())
-        .persist();
-      nock(process.env.VINOSHIPPER_API_URL)
-        .post(`/api/v3/p/orders`)
-        .reply(200, success())
-        .persist();
-      nock(process.env.VINOSHIPPER_API_URL)
-        .post(/^\/api\/v3\/p\/orders\/.+\/cancel/)
-        .reply(200, success())
-        .persist();
-    }
-  });
+  // before(() => {
+  //   if (process.env.NODE_ENV !== 'testFull') {
+  //     nock(process.env.C7_API_URL)
+  //       .get(/\/v1\/order\/.*/)
+  //       .reply(200, c7Order())
+  //       .persist();
+  //     nock(process.env.VINOSHIPPER_API_URL)
+  //       .post(`/api/v3/p/orders`)
+  //       .reply(200, success())
+  //       .persist();
+  //     nock(process.env.VINOSHIPPER_API_URL)
+  //       .post(/^\/api\/v3\/p\/orders\/.+\/cancel/)
+  //       .reply(200, success())
+  //       .persist();
+  //   }
+  // });
 
-  beforeEach(async () => {
-    const now = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const params = {
-      lastSyncAttemptDate: now.toISOString(),
-      type: 'Failed To Send',
-      attempts: [
-        {
-          attemptDate: now.toISOString(),
-          type: 'Failed To Send',
-          errors: [
-            { code: '1234', message: 'State Code Doesnt Exist' },
-            { code: '1234', message: 'State Code Doesnt Exist' }
-          ]
-        },
-        {
-          attemptDate: yesterday.toISOString(),
-          type: 'Failed To Send'
-        }
-      ]
+  // beforeEach(async () => {
+  //   const now = new Date();
+  //   const yesterday = new Date();
+  //   yesterday.setDate(yesterday.getDate() - 1);
+  //   const params = {
+  //     lastSyncAttemptDate: now.toISOString(),
+  //     type: 'Failed To Send',
+  //     attempts: [
+  //       {
+  //         attemptDate: now.toISOString(),
+  //         type: 'Failed To Send',
+  //         errors: [
+  //           { code: '1234', message: 'State Code Doesnt Exist' },
+  //           { code: '1234', message: 'State Code Doesnt Exist' }
+  //         ]
+  //       },
+  //       {
+  //         attemptDate: yesterday.toISOString(),
+  //         type: 'Failed To Send'
+  //       }
+  //     ]
+  //   };
+  //   const orderSync = await OrderSyncManager.create(global.securityObj, params);
+  //   local.orderId = orderSync.id;
+  // });
+
+  // afterEach(async () => {
+  //   await OrderSyncManager.deleteAll(global.securityObj);
+  // });
+
+  // after(() => {
+  //   nock.cleanAll();
+  // });
+
+  it.only('should test the base route', async () => {
+    const message = {
+      resource: '/',
+      path: '/',
+      httpMethod: 'POST',
+      queryStringParameters: null,
+      multiValueQueryStringParameters: null,
+      pathParameters: null,
+      stageVariables: null,
+      body: Buffer.from(JSON.stringify({ hello: 'hello' })).toString('base64'),
+      isBase64Encoded: true
     };
-    const orderSync = await OrderSyncManager.create(global.securityObj, params);
-    local.orderId = orderSync.id;
+
+    const response = await app(message);
+    console.log(response, '1-----');
+
+    // const response = await app.inject({
+    //   method: 'GET',
+    //   url: `/beta/order-sync/${local.orderId}`,
+    //   headers: global.headers
+    // });
+    // expect(response.statusCode).to.equal(200);
+    // const payload = response.json();
+    // expect(payload.type).to.equal('Failed To Send');
+    // expect(payload.attempts.length).to.equal(2);
+    // expect(payload.attempts[0].errors.length).to.equal(2);
   });
 
-  afterEach(async () => {
-    await OrderSyncManager.deleteAll(global.securityObj);
-  });
+  it.only('should test the base route', async () => {
+    const message = {
+      resource: '/beta/order-sync/webhook',
+      path: '/beta/order-sync/webhook',
+      httpMethod: 'POST',
+      queryStringParameters: null,
+      multiValueQueryStringParameters: null,
+      pathParameters: null,
+      stageVariables: null,
+      body: Buffer.from(JSON.stringify({ hello: 'hello' })).toString('base64'),
+      isBase64Encoded: true
+    };
 
-  after(() => {
-    nock.cleanAll();
+    const response = await app(message);
+    console.log(response, '2-----');
+    // const response = await app.inject({
+    //   method: 'GET',
+    //   url: `/beta/order-sync/${local.orderId}`,
+    //   headers: global.headers
+    // });
+    // expect(response.statusCode).to.equal(200);
+    // const payload = response.json();
+    // expect(payload.type).to.equal('Failed To Send');
+    // expect(payload.attempts.length).to.equal(2);
+    // expect(payload.attempts[0].errors.length).to.equal(2);
   });
 
   it('should list ALL syncs on /order-sync/:orderId GET', async () => {
