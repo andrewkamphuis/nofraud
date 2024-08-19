@@ -1,0 +1,56 @@
+{
+  "extends": ["airbnb/base","prettier"],
+  "parser": "@babel/eslint-parser",
+  "env": {"node": true, "mocha": true},
+  "plugins": ["prettier","no-only-tests"],
+    "rules": {
+      "import/no-self-import": "off",
+    "import/no-cycle": "off",
+      "no-only-tests/no-only-tests": "error",
+      "require-await": "error",
+    // 'eslint' rules
+    "max-len": [2, 120, 2],
+    "no-console": "error",
+    "no-alert": "error",
+    "no-underscore-dangle": "off",
+    "no-use-before-define": "off",
+    "no-param-reassign": "off",
+    "no-restricted-syntax": ["off", "ForInStatement"],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "only-multiline",
+        "imports": "only-multiline",
+        "exports": "only-multiline",
+        "functions": "never"
+      }
+    ],
+    // 'prettier' rules
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ]
+  },
+  "parserOptions": { "requireConfigFile": false }
+}
+

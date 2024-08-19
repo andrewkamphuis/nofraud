@@ -1,0 +1,47 @@
+{
+  "name": "noFraud",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "start": "vite",
+    "deploy:app:infrastructure": "build/production/scripts/deploy-app-infrastructure.sh",
+    "deploy": "npm run build && build/production/scripts/deploy.sh"
+  },
+  "dependencies": {
+    "@commerce7/admin-ui": "^1.12.5",
+    "@fontsource/inter": "^5.0.19",
+    "axios": "^1.7.2",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
+    "query-string": "^9.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.9",
+    "@babel/eslint-parser": "^7.24.8",
+    "@commerce7/eslint-config": "^1.1.6",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "axios": "^1.7.2",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-import-resolver-webpack": "^0.13.8",
+    "eslint-plugin-cypress": "^2.15.2",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "globals": "^15.8.0",
+    "prettier": "3.3.3",
+    "vite": "^5.3.1",
+    "vite-plugin-eslint": "^1.8.1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "diff": true,
+  "require": "./app/test/initialize.js",
+  "recursive": "true",
+  "exit": "true",
+  "timeout": 30000
+}

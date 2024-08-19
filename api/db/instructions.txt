@@ -1,0 +1,11 @@
+CREATE DATABASE
+npx sequelize db:create 
+
+RUN MIGRATION
+npx sequelize db:migrate
+
+UNDO MIGRATION
+npx sequelize db:migrate:undo
+
+GENERATE FILE
+npx sequelize migration:generate --name create-tenant
