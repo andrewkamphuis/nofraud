@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-import { sendToFifoQueue } from '../../helpers/sqsHelper';
-import { TenantManager } from '../tenant/manager';
+import { sendToFifoQueue } from '../../helpers/sqsHelper.js';
+import { TenantManager } from '../tenant/manager.js';
 
-import { DAO } from './dao';
-import { Gateway } from './gateway';
+import { DAO } from './dao.js';
+import { Gateway } from './gateway.js';
 
 let VINOSHIPPER_API_URL;
 if (process.env.NODE_ENV === 'production') {

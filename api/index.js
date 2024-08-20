@@ -1,12 +1,14 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable max-len */
 
 import env from 'dotenv';
 
-import { urlSwitch } from './app/routes/routes';
+import { urlSwitch } from './app/routes/routes.js';
 
 env.config({ path: './.env' });
 
-const app = async (message) => {
+export const app = async (message) => {
+  console.log('------------------------------here');
   // eslint-disable-next-line no-useless-catch
   try {
     if (message.resource) {
@@ -18,8 +20,6 @@ const app = async (message) => {
     throw err;
   }
 };
-
-export default app;
 
 // import cors from '@fastify/cors';
 // import env from 'dotenv';

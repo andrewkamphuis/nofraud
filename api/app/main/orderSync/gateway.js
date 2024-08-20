@@ -1,10 +1,11 @@
+/* eslint-disable import/extensions */
 import Sequelize from 'sequelize';
 
 import {
   OrderSync,
   OrderSyncAttempt,
   OrderSyncAttemptError
-} from '../../../models';
+} from '../../../models.js';
 
 export const listForIds = async (securityObj, ids) => {
   const op = Sequelize.Op;

@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 import {
   OrderSync,
   OrderSyncAttempt,
   OrderSyncAttemptError
-} from '../../../models';
-import CustomError from '../../helpers/error';
+} from '../../../models.js';
+import CustomError from '../../helpers/error.js';
 
-import { includeArray } from './gateway';
+import { includeArray } from './gateway.js';
 
 export const get = async (securityObj, id) => {
   const orderSync = await OrderSync.findOne({

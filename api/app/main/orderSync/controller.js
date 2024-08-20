@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 export const get = async (req, reply) => {
   reply.send({ success: true });
   // const orderSync = await OrderSyncManager.get(
@@ -43,4 +44,4 @@ export const webhook = async (req, reply) => {
   // reply.send({ isSuccess: true });
 };
 
-export * as orderSyncController from './controller';
+export * as orderSyncController from './controller.js';

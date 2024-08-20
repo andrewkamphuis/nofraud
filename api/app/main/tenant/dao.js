@@ -1,5 +1,6 @@
-import { Tenant } from '../../../models';
-import CustomError from '../../helpers/error';
+/* eslint-disable import/extensions */
+import { Tenant } from '../../../models.js';
+import CustomError from '../../helpers/error.js';
 
 export const get = async (id) => {
   const tenant = await Tenant.findOne({

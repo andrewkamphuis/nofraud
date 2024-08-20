@@ -1,6 +1,7 @@
-import CustomError from '../../helpers/error';
-import { OrderSyncManager } from '../orderSync/manager';
-import { ScheduledTaskManager } from '../scheduledTask/manager';
+/* eslint-disable import/extensions */
+import CustomError from '../../helpers/error.js';
+import { OrderSyncManager } from '../orderSync/manager.js';
+import { ScheduledTaskManager } from '../scheduledTask/manager.js';
 
 export const processConsumedMessage = async (message) => {
   switch (message.messageType) {

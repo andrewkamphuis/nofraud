@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import {
   SQSClient,
   SendMessageBatchCommand,
@@ -5,7 +6,7 @@ import {
 } from '@aws-sdk/client-sqs';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import { SQSManager } from '../main/sqs/manager';
+import { SQSManager } from '../main/sqs/manager.js';
 
 const sqs = new SQSClient(fromNodeProviderChain());
 

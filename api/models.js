@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 /* eslint-disable max-len */
 import { DataTypes, Sequelize } from 'sequelize';
 import sequelizeTransforms from 'sequelize-transforms';
 
-import config from './app/config/auroradb';
-import orderSync from './app/main/orderSync/model/orderSync';
-import orderSyncAttempt from './app/main/orderSync/model/orderSyncAttempt';
-import orderSyncAttemptError from './app/main/orderSync/model/orderSyncAttemptError';
+import config from './app/config/auroradb.js';
+import orderSync from './app/main/orderSync/model/orderSync.js';
+import orderSyncAttempt from './app/main/orderSync/model/orderSyncAttempt.js';
+import orderSyncAttemptError from './app/main/orderSync/model/orderSyncAttemptError.js';
 import tenant from './app/main/tenant/model/tenant';
 
 const { writerDatabase, readerDatabase, globalDatabase, analyticDatabase } =

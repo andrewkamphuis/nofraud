@@ -1,9 +1,10 @@
+/* eslint-disable import/extensions */
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 // import newrelic from 'newrelic';
 import { Consumer } from 'sqs-consumer';
 
-import { SQSManager } from './app/main/sqs/manager';
+import { SQSManager } from './app/main/sqs/manager.js';
 
 let errorCount = 0;
 

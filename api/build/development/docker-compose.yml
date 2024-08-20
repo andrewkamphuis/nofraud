@@ -14,24 +14,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_allowed_packet=1073741824
-  app_api:
-    depends_on:
-      - app_mysql8
-    build:
-      context: ../../
-      dockerfile: build/dockerfiles/Dockerfile.app
-    ports:
-      - '${APP_PORT}:${APP_PORT}'
-    volumes:
-      - type: bind
-        source: ../../
-        target: /var/www/app
-        volume:
-          nocopy: true
-    command: sh -c 'cd /var/www/app && npm run start:nodemon'
-    stdin_open: true
-    tty: false
-    container_name: ${COMPOSE_PROJECT_NAME}_api
 
 networks:
   default:

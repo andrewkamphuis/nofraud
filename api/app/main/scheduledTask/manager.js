@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-import { sendToFifoQueue } from '../../helpers/sqsHelper';
-import { OrderSyncManager } from '../orderSync/manager';
-import { TenantManager } from '../tenant/manager';
+import { sendToFifoQueue } from '../../helpers/sqsHelper.js';
+import { OrderSyncManager } from '../orderSync/manager.js';
+import { TenantManager } from '../tenant/manager.js';
 
-import { sendMonitorEmail } from './sendEmail';
+import { sendMonitorEmail } from './sendEmail.js';
 
 export const listTenants = async () => {
   const allActiveTenants = await TenantManager.listAllActiveTenants();

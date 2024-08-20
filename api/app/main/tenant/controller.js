@@ -1,4 +1,5 @@
-import CustomError from '../../helpers/error';
+/* eslint-disable import/extensions */
+import CustomError from '../../helpers/error.js';
 
 export const get = async (req, reply) => {
   reply.send({ success: true });

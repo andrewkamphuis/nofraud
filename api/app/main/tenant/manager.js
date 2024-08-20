@@ -1,5 +1,6 @@
-import { DAO } from './dao';
-import { Gateway } from './gateway';
+/* eslint-disable import/extensions */
+import { DAO } from './dao.js';
+import { Gateway } from './gateway.js';
 
 export const listAllActiveTenants = async () => {
   const tenants = await Gateway.listAllActiveTenants();

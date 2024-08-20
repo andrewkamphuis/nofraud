@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 // import { DeleteCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 // import Rollbar from 'rollbar';
 import Sequelize from 'sequelize';
 
 // import { ddbDocClient3 } from '../../../dynamodb3';
-import { sequelize } from '../../models';
+import { sequelize } from '../../models.js';
 
-import CustomError from './error';
+import CustomError from './error.js';
 
 // const rollbar = new Rollbar({
 //   accessToken: '0c91f2e2a646414f9cb54a5d9f7ef9e2'

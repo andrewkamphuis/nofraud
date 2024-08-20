@@ -1,9 +1,14 @@
-import { orderSyncController } from '../main/orderSync/controller';
+/* eslint-disable import/extensions */
+import { orderSyncController } from '../main/orderSync/controller.js';
 
 // eslint-disable-next-line import/prefer-default-export
 export const urlSwitch = async (path, body) => {
-  const messageBody = Buffer.from(body, 'base64').toString('utf8');
-  const message = JSON.parse(messageBody);
+  console.log('---------------------urlSwitch', path, body);
+  let message;
+  if (body) {
+    const messageBody = Buffer.from(body, 'base64').toString('utf8');
+    message = JSON.parse(messageBody);
+  }
 
   const reply = (results) => {
     const response = {
@@ -15,10 +20,12 @@ export const urlSwitch = async (path, body) => {
       body: JSON.stringify(results),
       isBase64Encoded: false
     };
+    console.log('-------response', response);
     return response;
   };
 
   switch (path) {
+    case '/favicon.ico':
     case '/': {
       return reply({ App: 'NoFraud Integration App API - v2' });
     }
@@ -27,7 +34,7 @@ export const urlSwitch = async (path, body) => {
       return reply(response);
     }
     default:
-      throw new Error(`Invalid path: ${path}. Lambda directory: ${__dirname}`);
+      throw new Error(`Invalid path: ${path}.`);
   }
 };
 
