@@ -2,15 +2,28 @@ import { expect } from 'chai';
 // import nock from 'nock';
 // import '../../../test/common';
 
-import app from '../../../../app.js';
+import { app } from '../../../../index.js';
 // import { OrderSyncManager } from '../manager';
 
 // import { success } from './noFraudSamples';
-import { c7Order, webhook } from './sample';
 
 describe('orderSync.api.test.js - Order Sync beta API', () => {
   const local = {
-    orderId: ''
+    orderId: '12345'
+  };
+
+  const createRequest = (headers, method, path) => {
+    const message = {
+      resource: path,
+      path,
+      httpMethod: method,
+      queryStringParameters: null,
+      multiValueQueryStringParameters: headers,
+      pathParameters: null,
+      stageVariables: null,
+      isBase64Encoded: true
+    };
+    return message;
   };
 
   // before(() => {
@@ -64,177 +77,160 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
   //   nock.cleanAll();
   // });
 
-  it.only('should test the base route', async () => {
-    const message = {
-      resource: '/',
-      path: '/',
-      httpMethod: 'POST',
-      queryStringParameters: null,
-      multiValueQueryStringParameters: null,
-      pathParameters: null,
-      stageVariables: null,
-      body: Buffer.from(JSON.stringify({ hello: 'hello' })).toString('base64'),
-      isBase64Encoded: true
-    };
-
+  it('should test the base route', async () => {
+    const message = createRequest(global.headers, 'GET', '/');
     const response = await app(message);
-    console.log(response, '1-----');
-
-    // const response = await app.inject({
-    //   method: 'GET',
-    //   url: `/beta/order-sync/${local.orderId}`,
-    //   headers: global.headers
-    // });
-    // expect(response.statusCode).to.equal(200);
-    // const payload = response.json();
-    // expect(payload.type).to.equal('Failed To Send');
-    // expect(payload.attempts.length).to.equal(2);
-    // expect(payload.attempts[0].errors.length).to.equal(2);
+    const payload = JSON.parse(response.body);
+    expect(payload.App).to.equal('NoFraud Integration App API - v2');
   });
 
-  it.only('should test the base route', async () => {
-    const message = {
-      resource: '/beta/order-sync/webhook',
-      path: '/beta/order-sync/webhook',
-      httpMethod: 'POST',
-      queryStringParameters: null,
-      multiValueQueryStringParameters: null,
-      pathParameters: null,
-      stageVariables: null,
-      body: Buffer.from(JSON.stringify({ hello: 'hello' })).toString('base64'),
-      isBase64Encoded: true
-    };
-
+  it('should get the order on /order-sync/:orderId GET', async () => {
+    const message = createRequest(
+      global.headers,
+      'GET',
+      `/beta/order-sync/${local.orderId}`
+    );
     const response = await app(message);
-    console.log(response, '2-----');
-    // const response = await app.inject({
-    //   method: 'GET',
-    //   url: `/beta/order-sync/${local.orderId}`,
-    //   headers: global.headers
-    // });
-    // expect(response.statusCode).to.equal(200);
-    // const payload = response.json();
-    // expect(payload.type).to.equal('Failed To Send');
-    // expect(payload.attempts.length).to.equal(2);
-    // expect(payload.attempts[0].errors.length).to.equal(2);
+    const payload = JSON.parse(response.body);
+    expect(payload.success).to.equal(true);
   });
 
-  it('should list ALL syncs on /order-sync/:orderId GET', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: `/beta/order-sync/${local.orderId}`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    const payload = response.json();
-    expect(payload.type).to.equal('Failed To Send');
-    expect(payload.attempts.length).to.equal(2);
-    expect(payload.attempts[0].errors.length).to.equal(2);
-  });
-
-  it('should update an order sync to NoFraud /order-sync/:orderId PUT', async () => {
-    const response = await app.inject({
-      method: 'PUT',
-      url: `/beta/order-sync/${local.orderId}`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    const payload = response.json();
-    expect(payload.type).to.equal('Sent To NoFraud');
-  });
-
-  it('should error on pickup order', async () => {
-    const order = c7Order();
-    const pickupOrder = structuredClone(order);
-    pickupOrder.orderDeliveryMethod = 'Pickup';
-    const response = await OrderSyncManager.attemptSyncInTest(
-      global.securityObj,
-      pickupOrder
+  it('should send an order to NoFraud  on /order-sync/:orderId POST', async () => {
+    const message = createRequest(
+      global.headers,
+      'POST',
+      `/beta/order-sync/${local.orderId}`
     );
-    expect(response.type).to.equal('Not Required To Send');
+    const response = await app(message);
+    const payload = JSON.parse(response.body);
+    expect(payload.success).to.equal(true);
   });
 
-  it('should error on non-country order', async () => {
-    const order = c7Order();
-    const pickupOrder = structuredClone(order);
-    pickupOrder.shipTo.countryCode = 'CA';
-    const response = await OrderSyncManager.attemptSyncInTest(
-      global.securityObj,
-      pickupOrder
+  it('should check status at NoFraud  on /order-sync/:orderId/status PUT', async () => {
+    const message = createRequest(
+      global.headers,
+      'PUT',
+      `/beta/order-sync/${local.orderId}/status`
     );
-    expect(response.type).to.equal('Not Required To Send');
+    const response = await app(message);
+    const payload = JSON.parse(response.body);
+    expect(payload.success).to.equal(true);
   });
 
-  it('should error on non-state order', async () => {
-    const order = c7Order();
-    const pickupOrder = structuredClone(order);
-    pickupOrder.shipTo.stateCode = 'CA';
-    const response = await OrderSyncManager.attemptSyncInTest(
-      global.securityObj,
-      pickupOrder
+  it('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
+    const message = createRequest(
+      global.headers,
+      'PUT',
+      `/beta/order-sync/${local.orderId}/cancel`
     );
-    expect(response.type).to.equal('Not Required To Send');
+    const response = await app(message);
+    const payload = JSON.parse(response.body);
+    expect(payload.success).to.equal(true);
   });
 
-  it('should create an order sync to NoFraud /order-sync/:orderId PUT', async () => {
-    const response = await app.inject({
-      method: 'PUT',
-      url: `/beta/order-sync/1234`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    const payload = response.json();
-    expect(payload.type).to.equal('Sent To NoFraud');
-    expect(payload.attempts.length).to.equal(1);
-    expect(payload.attempts[0].errors.length).to.equal(0);
-  });
+  // it('should update an order sync to NoFraud /order-sync/:orderId PUT', async () => {
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: `/beta/order-sync/${local.orderId}`,
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   const payload = response.json();
+  //   expect(payload.type).to.equal('Sent To NoFraud');
+  // });
 
-  it('should void a sync /order-sync/:orderId/void PUT', async () => {
-    const response = await app.inject({
-      method: 'PUT',
-      url: `/beta/order-sync/${local.orderId}/void`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    const payload = response.json();
-    expect(payload.type).to.equal('Voided In NoFraud');
-    expect(payload.attempts.length).to.equal(3);
-    expect(payload.attempts[0].errors.length).to.equal(0);
-  });
+  // it('should error on pickup order', async () => {
+  //   const order = c7Order();
+  //   const pickupOrder = structuredClone(order);
+  //   pickupOrder.orderDeliveryMethod = 'Pickup';
+  //   const response = await OrderSyncManager.attemptSyncInTest(
+  //     global.securityObj,
+  //     pickupOrder
+  //   );
+  //   expect(response.type).to.equal('Not Required To Send');
+  // });
 
-  it('should mark a sync not required /order-sync/:orderId/not-required PUT', async () => {
-    const response = await app.inject({
-      method: 'PUT',
-      url: `/beta/order-sync/${local.orderId}/not-required`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    const payload = response.json();
-    expect(payload.type).to.equal('Not Required To Send');
-    expect(payload.attempts.length).to.equal(3);
-    expect(payload.attempts[0].errors.length).to.equal(0);
-  });
+  // it('should error on non-country order', async () => {
+  //   const order = c7Order();
+  //   const pickupOrder = structuredClone(order);
+  //   pickupOrder.shipTo.countryCode = 'CA';
+  //   const response = await OrderSyncManager.attemptSyncInTest(
+  //     global.securityObj,
+  //     pickupOrder
+  //   );
+  //   expect(response.type).to.equal('Not Required To Send');
+  // });
 
-  it('should listen for a webhook /order-sync/webhook PUT', async () => {
-    let response = await app.inject({
-      method: 'POST',
-      url: `/beta/order-sync/webhook`,
-      payload: webhook(),
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    let payload = response.json();
-    expect(payload.isSuccess).to.equal(true);
+  // it('should error on non-state order', async () => {
+  //   const order = c7Order();
+  //   const pickupOrder = structuredClone(order);
+  //   pickupOrder.shipTo.stateCode = 'CA';
+  //   const response = await OrderSyncManager.attemptSyncInTest(
+  //     global.securityObj,
+  //     pickupOrder
+  //   );
+  //   expect(response.type).to.equal('Not Required To Send');
+  // });
 
-    response = await app.inject({
-      method: 'GET',
-      url: `/beta/order-sync/e15e4d80-d81b-40f4-aea1-d445e0ec8f3f`,
-      headers: global.headers
-    });
-    expect(response.statusCode).to.equal(200);
-    payload = response.json();
-    expect(payload.type).to.equal('Sent To NoFraud');
-    expect(payload.attempts.length).to.equal(1);
-    expect(payload.attempts[0].errors.length).to.equal(0);
-  });
+  // it('should create an order sync to NoFraud /order-sync/:orderId PUT', async () => {
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: `/beta/order-sync/1234`,
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   const payload = response.json();
+  //   expect(payload.type).to.equal('Sent To NoFraud');
+  //   expect(payload.attempts.length).to.equal(1);
+  //   expect(payload.attempts[0].errors.length).to.equal(0);
+  // });
+
+  // it('should void a sync /order-sync/:orderId/void PUT', async () => {
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: `/beta/order-sync/${local.orderId}/void`,
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   const payload = response.json();
+  //   expect(payload.type).to.equal('Voided In NoFraud');
+  //   expect(payload.attempts.length).to.equal(3);
+  //   expect(payload.attempts[0].errors.length).to.equal(0);
+  // });
+
+  // it('should mark a sync not required /order-sync/:orderId/not-required PUT', async () => {
+  //   const response = await app.inject({
+  //     method: 'PUT',
+  //     url: `/beta/order-sync/${local.orderId}/not-required`,
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   const payload = response.json();
+  //   expect(payload.type).to.equal('Not Required To Send');
+  //   expect(payload.attempts.length).to.equal(3);
+  //   expect(payload.attempts[0].errors.length).to.equal(0);
+  // });
+
+  // it('should listen for a webhook /order-sync/webhook PUT', async () => {
+  //   let response = await app.inject({
+  //     method: 'POST',
+  //     url: `/beta/order-sync/webhook`,
+  //     payload: webhook(),
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   let payload = response.json();
+  //   expect(payload.isSuccess).to.equal(true);
+
+  //   response = await app.inject({
+  //     method: 'GET',
+  //     url: `/beta/order-sync/e15e4d80-d81b-40f4-aea1-d445e0ec8f3f`,
+  //     headers: global.headers
+  //   });
+  //   expect(response.statusCode).to.equal(200);
+  //   payload = response.json();
+  //   expect(payload.type).to.equal('Sent To NoFraud');
+  //   expect(payload.attempts.length).to.equal(1);
+  //   expect(payload.attempts[0].errors.length).to.equal(0);
+  // });
 });

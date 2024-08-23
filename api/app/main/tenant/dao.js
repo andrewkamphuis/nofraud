@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import { Tenant } from '../../../models.js';
 import CustomError from '../../helpers/error.js';
 

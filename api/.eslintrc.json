@@ -4,6 +4,7 @@
   "env": {"node": true, "mocha": true},
   "plugins": ["prettier","no-only-tests"],
     "rules": {
+      "import/extensions": "off",
       "import/no-self-import": "off",
     "import/no-cycle": "off",
       "no-only-tests/no-only-tests": "error",

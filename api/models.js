@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 /* eslint-disable max-len */
 import { DataTypes, Sequelize } from 'sequelize';
 import sequelizeTransforms from 'sequelize-transforms';

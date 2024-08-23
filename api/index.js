@@ -8,11 +8,10 @@ import { urlSwitch } from './app/routes/routes.js';
 env.config({ path: './.env' });
 
 export const app = async (message) => {
-  console.log('------------------------------here');
   // eslint-disable-next-line no-useless-catch
   try {
     if (message.resource) {
-      const results = await urlSwitch(message.path, message.body);
+      const results = await urlSwitch(message);
       return results;
     }
     throw Error('No idea where this came from');

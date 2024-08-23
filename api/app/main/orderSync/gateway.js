@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import Sequelize from 'sequelize';
 
 import {

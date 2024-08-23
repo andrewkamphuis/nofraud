@@ -1,14 +1,54 @@
-/* eslint-disable import/extensions */
-import { orderSyncController } from '../main/orderSync/controller.js';
+import { match } from 'path-to-regexp';
+
+import { orderSyncController as orderSync } from '../main/orderSync/controller.js';
+import { scheduledTaskController as scheduledTask } from '../main/scheduledTask/controller.js';
+import { tenantController as tenant } from '../main/tenant/controller.js';
 
 // eslint-disable-next-line import/prefer-default-export
-export const urlSwitch = async (path, body) => {
-  console.log('---------------------urlSwitch', path, body);
-  let message;
+export const urlSwitch = async (message) => {
+  const { httpMethod, path } = message;
+  let { body } = message;
+
   if (body) {
-    const messageBody = Buffer.from(body, 'base64').toString('utf8');
-    message = JSON.parse(messageBody);
+    body = Buffer.from(body, 'base64').toString('utf8');
+    body = JSON.parse(body);
   }
+
+  const routes = {};
+
+  const route = (method, pth, func) => {
+    if (!routes[pth]) {
+      routes[pth] = {};
+    }
+    routes[pth][method] = func;
+  };
+
+  route('GET', 'favicon.ico', '() => null');
+  route('GET', '/', () => ({ App: 'NoFraud Integration App API - v2' }));
+
+  // Order Operations
+  route('GET', '/beta/order-sync/:orderId', orderSync.get);
+  route('POST', '/beta/order-sync/:orderId', orderSync.create);
+  route('PUT', '/beta/order-sync/:orderId/status', orderSync.checkStatus);
+  route('PUT', '/beta/order-sync/:orderId/cancel', orderSync.cancelAtNoFraud);
+  route('POST', '/beta/order-sync/WEBHOOK', orderSync.webhook);
+
+  // Tenant - install, uninstall, update
+  route('GET', '/beta/tenant', tenant.get);
+  route('PUT', '/beta/tenant', tenant.update);
+  route('POST', '/beta/tenant', tenant.install);
+  route('POST', '/beta/tenant/uninstall', tenant.uninstall);
+
+  //   /* scheduled tasks */
+  route('GET', '/beta/scheduled-task/sync', scheduledTask.sync);
+  route('GET', '/beta/scheduled-task/monitor', scheduledTask.monitor);
+
+  const pathTest = (pathToTest) => {
+    if (match(pathToTest)(path) !== false) {
+      return true;
+    }
+    return false;
+  };
 
   const reply = (results) => {
     const response = {
@@ -20,61 +60,32 @@ export const urlSwitch = async (path, body) => {
       body: JSON.stringify(results),
       isBase64Encoded: false
     };
-    console.log('-------response', response);
     return response;
   };
 
-  switch (path) {
-    case '/favicon.ico':
-    case '/': {
-      return reply({ App: 'NoFraud Integration App API - v2' });
+  const routeArray = Object.keys(routes);
+
+  for (const rPath of routeArray) {
+    if (pathTest(rPath, path)) {
+      if (routes[rPath][httpMethod]) {
+        const requestObj = {
+          securityObj: { tenantId: 'testing' },
+          params: {}
+        };
+
+        // Add parameters to request object
+        const pathResults = match(rPath)(path);
+        requestObj.params = pathResults.params;
+
+        // TODO - add body //
+        // TODO - add query string //
+
+        // eslint-disable-next-line no-await-in-loop
+        const response = await routes[rPath][httpMethod](requestObj);
+        return reply(response);
+      }
     }
-    case '/beta/order-sync/webhook': {
-      const response = await orderSyncController.webhook(message);
-      return reply(response);
-    }
-    default:
-      throw new Error(`Invalid path: ${path}.`);
   }
+
+  throw new Error(`Invalid path: ${path}. ${httpMethod}`);
 };
-
-// const routes = (fastify, _options, done) => {
-//   /* sync */
-//   fastify.get('/beta/order-sync/:orderId', route(orderSyncController.get));
-//   fastify.put('/beta/order-sync/:orderId', route(orderSyncController.sync));
-//   fastify.put(
-//     '/beta/order-sync/:orderId/void',
-//     route(orderSyncController.voidSync)
-//   );
-//   fastify.put(
-//     '/beta/order-sync/:orderId/not-required',
-//     route(orderSyncController.notRequired)
-//   );
-//   fastify.post('/beta/order-sync/webhook', route(orderSyncController.webhook));
-
-//   /* tenant - install, uninstall, update */
-//   fastify.get('/beta/tenant', route(tenantController.get));
-//   fastify.put('/beta/tenant', route(tenantController.update));
-//   fastify.post('/beta/tenant', route(tenantController.install));
-//   fastify.post('/beta/tenant/uninstall', route(tenantController.uninstall));
-
-//   /* scheduled tasks */
-//   fastify.get('/beta/scheduled-task/sync', route(scheduledTaskController.sync));
-//   fastify.get(
-//     '/beta/scheduled-task/monitor',
-//     route(scheduledTaskController.monitor)
-//   );
-
-//   done();
-// };
-
-// const route = (controllerFn, authType, role, appRole, customFunction) => {
-//   const options = {
-//     handler: (request, reply) =>
-//       roleCheck(controllerFn, request, reply, role, appRole, customFunction),
-//     onRequest: authType
-//   };
-//   return options;
-// };
-
-// export default routes;

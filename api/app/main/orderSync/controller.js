@@ -1,6 +1,6 @@
-/* eslint-disable import/extensions */
-export const get = async (req, reply) => {
-  reply.send({ success: true });
+export const get = async (req) => {
+  const response = { success: true };
+  return response;
   // const orderSync = await OrderSyncManager.get(
   //   req.securityObj,
   //   req.params.orderId
@@ -8,8 +8,9 @@ export const get = async (req, reply) => {
   // reply.send(orderSync);
 };
 
-export const sync = async (req, reply) => {
-  reply.send({ success: true });
+export const create = async (req) => {
+  const response = { success: true };
+  return response;
   // const orderSync = await OrderSyncManager.sync(
   //   req.securityObj,
   //   req.params.orderId
@@ -17,8 +18,9 @@ export const sync = async (req, reply) => {
   // reply.send(orderSync);
 };
 
-export const voidSync = async (req, reply) => {
-  reply.send({ success: true });
+export const checkStatus = async (req) => {
+  const response = { success: true };
+  return response;
   // const orderSync = await OrderSyncManager.voidSync(
   //   req.securityObj,
   //   req.params.orderId
@@ -26,8 +28,9 @@ export const voidSync = async (req, reply) => {
   // reply.send(orderSync);
 };
 
-export const notRequired = async (req, reply) => {
-  reply.send({ success: true });
+export const cancelAtNoFraud = async (req) => {
+  const response = { success: true };
+  return response;
   // const orderSync = await OrderSyncManager.notRequired(
   //   req.securityObj,
   //   req.params.orderId
@@ -35,8 +38,7 @@ export const notRequired = async (req, reply) => {
   // reply.send(orderSync);
 };
 
-export const webhook = async (req, reply) => {
-  console.log(reply);
+export const webhook = async (req) => {
   const response = { success: true };
   return response;
   // const params = req.body;

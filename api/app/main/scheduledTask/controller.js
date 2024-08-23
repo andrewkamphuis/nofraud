@@ -1,11 +1,13 @@
-export const sync = async (req, reply) => {
+export const sync = async (req) => {
   // await ScheduledTaskManager.listTenants();
-  reply.send({ isSuccess: true });
+  const response = { success: true };
+  return response;
 };
 
-export const monitor = async (req, reply) => {
+export const monitor = async (req) => {
   // await ScheduledTaskManager.monitor();
-  reply.send({ isSuccess: true });
+  const response = { success: true };
+  return response;
 };
 
 export * as scheduledTaskController from './controller';

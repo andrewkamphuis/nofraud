@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 // import { DeleteCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 // import Rollbar from 'rollbar';
 import Sequelize from 'sequelize';

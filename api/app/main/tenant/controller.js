@@ -1,14 +1,15 @@
-/* eslint-disable import/extensions */
 import CustomError from '../../helpers/error.js';
 
-export const get = async (req, reply) => {
-  reply.send({ success: true });
+export const get = async (req) => {
+  const response = { success: true };
+  return response;
   // const tenant = await TenantManager.get(req.securityObj);
   // reply.send(tenant);
 };
 
-export const install = async (req, reply) => {
-  reply.send({ success: true });
+export const install = async (req) => {
+  const response = { success: true };
+  return response;
   // const params = req.body;
   // req.securityObj.tenantId = params.tenantId;
   // delete params.tenantId;
@@ -19,8 +20,9 @@ export const install = async (req, reply) => {
   // reply.send(tenant);
 };
 
-export const uninstall = async (req, reply) => {
-  reply.send({ success: true });
+export const uninstall = async (req) => {
+  const response = { success: true };
+  return response;
   // const params = req.body;
   // req.securityObj.tenantId = params.tenantId;
   // delete params.tenantId;
@@ -29,8 +31,9 @@ export const uninstall = async (req, reply) => {
   // reply.send(tenant);
 };
 
-export const update = async (req, reply) => {
-  reply.send({ success: true });
+export const update = async (req) => {
+  const response = { success: true };
+  return response;
   // const params = req.body;
   // validate(validateUpdate(params));
   // const tenant = await TenantManager.update(req.securityObj, params);

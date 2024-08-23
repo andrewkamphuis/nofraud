@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import { DAO } from './dao.js';
 import { Gateway } from './gateway.js';
 

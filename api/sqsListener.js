@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 // import newrelic from 'newrelic';
