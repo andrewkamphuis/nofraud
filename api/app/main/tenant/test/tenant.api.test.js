@@ -1,19 +1,19 @@
 import { expect } from 'chai';
-// import '../../../test/common';
+import '../../../test/common';
 
-// import { TenantManager } from '../manager';
 import { app } from '../../../../index.js';
+import { TenantManager } from '../manager';
 
 describe('tenant.api.test.js - Tenant beta API', () => {
-  //   before(async () => {
-  //     await TenantManager.deleteForTestSuite('testing2');
-  //   });
+  before(async () => {
+    await TenantManager.deleteForTestSuite('testing2');
+  });
 
-  //   after(async () => {
-  //     await TenantManager.deleteForTestSuite('testing2');
-  //   });
+  after(async () => {
+    await TenantManager.deleteForTestSuite('testing2');
+  });
 
-  const createRequest = (headers, method, path) => {
+  const createRequest = (headers, method, path, payload) => {
     const message = {
       resource: path,
       path,
@@ -24,90 +24,71 @@ describe('tenant.api.test.js - Tenant beta API', () => {
       stageVariables: null,
       isBase64Encoded: true
     };
+    if (payload) {
+      message.body = Buffer.from(JSON.stringify(payload)).toString('base64');
+    }
     return message;
   };
 
   it('should install, update, uninstall a SINGLE tenant on /tenant', async () => {
-    // let response = await app.inject({
-    //   method: 'POST',
-    //   url: `/beta/tenant`,
-    //   payload: {
-    //     noFraudUsername: 'Test',
-    //     noFraudPassword: 'Test',
-    //     tenantId: 'testing2',
-    //     user: 'test'
-    //   }
-    // });
-    let message = createRequest(global.headers, 'POST', `/beta/tenant`);
+    let reqPayload = {
+      noFraudUsername: 'Test',
+      noFraudPassword: 'Test',
+      tenantId: 'testing2',
+      user: 'test'
+    };
+    let message = createRequest(undefined, 'POST', `/beta/tenant`, reqPayload);
     let response = await app(message);
     let payload = JSON.parse(response.body);
-    expect(payload.success).to.equal(true);
-    // expect(payload.noFraudUsername).to.equal('Test');
-    // expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudUsername).to.equal('Test');
+    expect(payload.noFraudPassword).to.equal(undefined);
 
-    // response = await app.inject({
-    //     method: 'GET',
-    //     url: `/beta/tenant`,
-    //     headers: { tenantId: 'testing2' }
-    //   });
-    message = createRequest(global.headers, 'GET', `/beta/tenant`);
+    message = createRequest({ tenantId: 'testing2' }, 'GET', `/beta/tenant`);
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.success).to.equal(true);
-    // expect(payload.noFraudUsername).to.equal('Test');
-    // expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudUsername).to.equal('Test');
+    expect(payload.noFraudPassword).to.equal(undefined);
 
-    // response = await app.inject({
-    //   method: 'PUT',
-    //   url: `/beta/tenant`,
-    //   payload: {
-    //     noFraudUsername: 'Test2',
-    //     noFraudPassword: 'Test2',
-    //     stateCodes: ['AR']
-    //   },
-    //   headers: { tenantId: 'testing2' }
-    // });
-    message = createRequest(global.headers, 'PUT', `/beta/tenant`);
+    reqPayload = {
+      noFraudUsername: 'Test2',
+      noFraudPassword: 'Test2'
+    };
+    message = createRequest(
+      { tenantId: 'testing2' },
+      'PUT',
+      `/beta/tenant`,
+      reqPayload
+    );
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.success).to.equal(true);
-    // expect(payload.noFraudUsername).to.equal('Test2');
-    // expect(payload.noFraudPassword).to.equal(undefined);
-    // expect(payload.stateCodes[0]).to.equal('AR');
+    expect(payload.noFraudUsername).to.equal('Test2');
+    expect(payload.noFraudPassword).to.equal(undefined);
 
-    // response = await app.inject({
-    //   method: 'POST',
-    //   url: `/beta/tenant/uninstall`,
-    //   payload: {
-    //     tenantId: 'testing2',
-    //     user: 'test'
-    //   }
-    // });
-    message = createRequest(global.headers, 'POST', `/beta/tenant/uninstall`);
+    reqPayload = {
+      tenantId: 'testing2',
+      user: 'test'
+    };
+    message = createRequest(
+      undefined,
+      'POST',
+      `/beta/tenant/uninstall`,
+      reqPayload
+    );
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.success).to.equal(true);
-    // expect(payload.isInstalled).to.equal(false);
+    expect(payload.isInstalled).to.equal(false);
 
     // INSTALL AGAIN
-    // response = await app.inject({
-    //   method: 'POST',
-    //   url: `/beta/tenant`,
-    //   payload: {
-    //     noFraudUsername: 'Test',
-    //     noFraudPassword: 'Test',
-    //     tenantId: 'testing2',
-    //     user: 'test'
-    //   }
-    // });
-    message = createRequest(global.headers, 'POST', `/beta/tenant`);
+    reqPayload = {
+      noFraudUsername: 'Test',
+      noFraudPassword: 'Test',
+      tenantId: 'testing2',
+      user: 'test'
+    };
+    message = createRequest(undefined, 'POST', `/beta/tenant`, reqPayload);
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.success).to.equal(true);
-
-    // expect(response.statusCode).to.equal(200);
-    // payload = response.json();
-    // expect(payload.noFraudUsername).to.equal('Test');
-    // expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudUsername).to.equal('Test');
+    expect(payload.noFraudPassword).to.equal(undefined);
   });
 });

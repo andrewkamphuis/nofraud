@@ -1,43 +1,38 @@
 import CustomError from '../../helpers/error.js';
 
+import { TenantManager } from './manager.js';
+import { validateInstall, validateUpdate } from './validator.js';
+
 export const get = async (req) => {
-  const response = { success: true };
-  return response;
-  // const tenant = await TenantManager.get(req.securityObj);
-  // reply.send(tenant);
+  const tenant = await TenantManager.get(req.securityObj);
+  return tenant;
 };
 
 export const install = async (req) => {
-  const response = { success: true };
-  return response;
-  // const params = req.body;
-  // req.securityObj.tenantId = params.tenantId;
-  // delete params.tenantId;
-  // delete params.user;
+  const params = req.body;
+  req.securityObj.tenantId = params.tenantId;
+  delete params.tenantId;
+  delete params.user;
 
-  // validate(validateInstall(params));
-  // const tenant = await TenantManager.install(req.securityObj, params);
-  // reply.send(tenant);
+  validate(validateInstall(params));
+  const tenant = await TenantManager.install(req.securityObj, params);
+  return tenant;
 };
 
 export const uninstall = async (req) => {
-  const response = { success: true };
-  return response;
-  // const params = req.body;
-  // req.securityObj.tenantId = params.tenantId;
-  // delete params.tenantId;
-  // delete params.user;
-  // const tenant = await TenantManager.uninstall(req.securityObj);
-  // reply.send(tenant);
+  const params = req.body;
+  req.securityObj.tenantId = params.tenantId;
+  delete params.tenantId;
+  delete params.user;
+  const tenant = await TenantManager.uninstall(req.securityObj);
+  return tenant;
 };
 
 export const update = async (req) => {
-  const response = { success: true };
-  return response;
-  // const params = req.body;
-  // validate(validateUpdate(params));
-  // const tenant = await TenantManager.update(req.securityObj, params);
-  // reply.send(tenant);
+  const params = req.body;
+  validate(validateUpdate(params));
+  const tenant = await TenantManager.update(req.securityObj, params);
+  return tenant;
 };
 
 const validate = (resultsArray) => {

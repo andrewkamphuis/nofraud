@@ -43,6 +43,7 @@ const config = {
         host: process.env.DB_WRITER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
         retry: retryConfig
       },
       readerDatabase: {
@@ -56,6 +57,7 @@ const config = {
         host: process.env.DB_READER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
         retry: retryConfig
       }
       // analyticDatabase: {
@@ -96,6 +98,7 @@ const config = {
           acquire: 10000,
           testOnBorrow: true
         },
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       },
       writerDatabase: {
@@ -110,6 +113,7 @@ const config = {
         host: process.env.DB_WRITER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       },
       readerDatabase: {
@@ -124,6 +128,7 @@ const config = {
         host: process.env.DB_READER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       }
     }
@@ -149,6 +154,7 @@ const config = {
           acquire: 10000,
           testOnBorrow: true
         },
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       },
       writerDatabase: {
@@ -170,6 +176,7 @@ const config = {
           acquire: 10000,
           testOnBorrow: true
         },
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       },
       readerDatabase: {
@@ -191,6 +198,7 @@ const config = {
           acquire: 10000,
           testOnBorrow: true
         },
+        port: process.env.DB_PORT,
         retry: retryConfigTest
       }
     }

@@ -1,20 +1,21 @@
 import { DAO } from './dao.js';
-import { Gateway } from './gateway.js';
+// import { Gateway } from './gateway.js';
 
-export const listAllActiveTenants = async () => {
-  const tenants = await Gateway.listAllActiveTenants();
-  return tenants;
-};
+// export const listAllActiveTenants = async () => {
+//   const tenants = await Gateway.listAllActiveTenants();
+//   return tenants;
+// };
 
 export const get = async (securityObj) => {
   const tenant = await DAO.get(securityObj.tenantId);
+
   return tenant;
 };
 
-export const getWithSensitiveVariables = async (securityObj) => {
-  const tenant = await DAO.getWithSensitiveVariables(securityObj.tenantId);
-  return tenant;
-};
+// export const getWithSensitiveVariables = async (securityObj) => {
+//   const tenant = await DAO.getWithSensitiveVariables(securityObj.tenantId);
+//   return tenant;
+// };
 
 export const createForTestSuite = async (params) => {
   if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'testFull') {
@@ -30,7 +31,6 @@ export const install = async (securityObj, params) => {
   params.installDate = now.toISOString();
   params.isInstalled = true;
   params.lastSyncDate = now.toISOString();
-  params.stateCodes = [];
 
   // Is it already created?  If so then update it
   const existingTenant = await teantIfExists(securityObj);
@@ -40,6 +40,7 @@ export const install = async (securityObj, params) => {
   }
   params.id = securityObj.tenantId;
   const tenant = await DAO.create(params);
+
   return tenant;
 };
 

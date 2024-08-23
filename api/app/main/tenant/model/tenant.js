@@ -18,10 +18,6 @@ const model = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         trim: true
       },
-      stateCodes: {
-        allowNull: false,
-        type: DataTypes.JSON
-      },
       installDate: {
         allowNull: false,
         type: DataTypes.DATE(6)

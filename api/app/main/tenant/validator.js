@@ -1,59 +1,5 @@
 import jsonValidator from '../../helpers/jsonValidator';
 
-const stateArray = [
-  'AL',
-  'AK',
-  'AZ',
-  'AR',
-  'CA',
-  'CO',
-  'CT',
-  'DE',
-  'FL',
-  'GA',
-  'HI',
-  'ID',
-  'IL',
-  'IN',
-  'IA',
-  'KS',
-  'KY',
-  'LA',
-  'ME',
-  'MD',
-  'MA',
-  'MI',
-  'MN',
-  'MS',
-  'MO',
-  'MT',
-  'NE',
-  'NV',
-  'NH',
-  'NJ',
-  'NM',
-  'NY',
-  'NC',
-  'ND',
-  'OH',
-  'OK',
-  'OR',
-  'PA',
-  'RI',
-  'SC',
-  'SD',
-  'TN',
-  'TX',
-  'UT',
-  'VT',
-  'VA',
-  'WA',
-  'WV',
-  'WI',
-  'WY',
-  'DC'
-];
-
 export const tenantInstallSchema = () => {
   const schema = {
     type: 'object',
@@ -73,16 +19,7 @@ export const tenantUpdateSchema = () => {
     type: 'object',
     properties: {
       noFraudUsername: { type: 'string' },
-      noFraudPassword: { type: 'string' },
-      stateCodes: {
-        type: 'array',
-        items: {
-          type: 'string',
-          enum: stateArray
-        },
-        uniqueItems: true,
-        minItems: 0
-      }
+      noFraudPassword: { type: 'string' }
     },
     additionalProperties: false
   };

@@ -69,20 +69,31 @@ export const urlSwitch = async (message) => {
     if (pathTest(rPath, path)) {
       if (routes[rPath][httpMethod]) {
         const requestObj = {
-          securityObj: { tenantId: 'testing' },
-          params: {}
+          securityObj: message.multiValueQueryStringParameters || {}
         };
 
         // Add parameters to request object
         const pathResults = match(rPath)(path);
         requestObj.params = pathResults.params;
 
-        // TODO - add body //
+        if (message.body) {
+          let messageBody = Buffer.from(message.body, 'base64').toString(
+            'utf8'
+          );
+          messageBody = JSON.parse(messageBody);
+          requestObj.body = messageBody;
+        }
+
         // TODO - add query string //
 
-        // eslint-disable-next-line no-await-in-loop
-        const response = await routes[rPath][httpMethod](requestObj);
-        return reply(response);
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const response = await routes[rPath][httpMethod](requestObj);
+          return reply(response);
+        } catch (err) {
+          // TODO - handle error response
+          console.log(err);
+        }
       }
     }
   }
