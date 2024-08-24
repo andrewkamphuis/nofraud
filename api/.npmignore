@@ -1,0 +1,34 @@
+# Node Modules folder
+node_modules
+node_modules/
+node_modules/*
+
+
+# Build folder
+build/
+build/development/
+build/dockerfiles/
+build/production/
+
+
+# Dependencies folder
+dependencies/
+dependencies/nodejs/
+dependencies/nodejs/node_modules/
+
+# DB Migrations folder
+db/*
+
+# Build files
+.template.yml
+samconfig.toml
+nodemon.json
+.mocharc.json
+.npmrc
+
+# Linters
+.eslint*
+.prettier*
+
+# Env files
+.env*
