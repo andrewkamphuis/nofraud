@@ -136,3 +136,6 @@ dist
 
 # production cloudformation parameters
 production-parameters.json
+
+# sam local
+.aws-sam/build/
