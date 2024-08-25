@@ -18,10 +18,6 @@ const model = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         lowercase: true
       },
-      code: {
-        allowNull: false,
-        type: DataTypes.STRING
-      },
       message: {
         allowNull: false,
         type: DataTypes.TEXT
