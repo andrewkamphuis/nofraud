@@ -1,0 +1,45 @@
+import { OrderSyncManager } from '../orderSync/manager';
+
+export const get = async (tenantId, orderId) => {
+  const response = {
+    // icon: 'https://atshealthcarereport.tfdapps.com/ats.svg',
+    subTitle: 'NOFRAUD',
+    footer: ''
+  };
+
+  let orderSync;
+  try {
+    orderSync = await OrderSyncManager.get({ tenantId }, orderId);
+  } catch (err) {
+    if (err.statusCode === 404) {
+      response.title = 'Not Sent';
+      response.variant = 'error';
+      return response;
+    }
+    throw err;
+  }
+
+  response.title = orderSync.type;
+
+  switch (orderSync.type) {
+    case 'Pass':
+      response.variant = null;
+      break;
+    case 'Needs Review':
+      response.variant = 'warning';
+      break;
+    case 'Fail':
+      response.variant = 'error';
+      break;
+    case 'Not Required':
+    case 'Cancelled':
+      response.variant = null;
+      break;
+    default:
+      throw new Error('Unknown orderSync type');
+  }
+  // variant="warning", error,
+  return response;
+};
+
+export * as OrderCardManager from './manager';

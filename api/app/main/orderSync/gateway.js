@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+// import Sequelize from 'sequelize';
 
 import {
   OrderSync,
@@ -6,19 +6,19 @@ import {
   OrderSyncAttemptError
 } from '../../../models.js';
 
-export const listForIds = async (securityObj, ids) => {
-  const op = Sequelize.Op;
+// export const listForIds = async (securityObj, ids) => {
+//   const op = Sequelize.Op;
 
-  const orderSyncs = await OrderSync.findAll({
-    where: {
-      tenantId: securityObj.tenantId,
-      id: {
-        [op.in]: ids
-      }
-    }
-  });
-  return orderSyncs;
-};
+//   const orderSyncs = await OrderSync.findAll({
+//     where: {
+//       tenantId: securityObj.tenantId,
+//       id: {
+//         [op.in]: ids
+//       }
+//     }
+//   });
+//   return orderSyncs;
+// };
 
 export const deleteAll = async (securityObj) => {
   await OrderSync.destroy({

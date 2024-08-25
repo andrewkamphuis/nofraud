@@ -20,10 +20,11 @@ const model = (sequelize, DataTypes) => {
       type: {
         allowNull: false,
         type: DataTypes.ENUM(
-          'Not Required To Send',
-          'Failed To Send',
-          'Sent To NoFraud',
-          'Voided In NoFraud'
+          'Pass',
+          'Needs Review',
+          'Fail',
+          'Cancelled',
+          'Not Required'
         )
       },
       createdAt: {

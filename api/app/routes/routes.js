@@ -1,5 +1,6 @@
 import { match } from 'path-to-regexp';
 
+import { orderCardController as orderCard } from '../main/orderCard/controller.js';
 import { orderSyncController as orderSync } from '../main/orderSync/controller.js';
 import { scheduledTaskController as scheduledTask } from '../main/scheduledTask/controller.js';
 import { tenantController as tenant } from '../main/tenant/controller.js';
@@ -28,10 +29,13 @@ export const urlSwitch = async (message) => {
 
   // Order Operations
   route('GET', '/beta/order-sync/:orderId', orderSync.get);
-  route('POST', '/beta/order-sync/:orderId', orderSync.create);
+  route('PUT', '/beta/order-sync/:orderId', orderSync.create);
   route('PUT', '/beta/order-sync/:orderId/status', orderSync.checkStatus);
   route('PUT', '/beta/order-sync/:orderId/cancel', orderSync.cancelAtNoFraud);
-  route('POST', '/beta/order-sync/WEBHOOK', orderSync.webhook);
+  route('POST', '/beta/order-sync/webhook', orderSync.webhook);
+
+  // card for admin //
+  route('GET', '/beta/order-card', orderCard.get);
 
   // Tenant - install, uninstall, update
   route('GET', '/beta/tenant', tenant.get);
@@ -82,6 +86,9 @@ export const urlSwitch = async (message) => {
           );
           messageBody = JSON.parse(messageBody);
           requestObj.body = messageBody;
+        }
+        if (message.queryStringParameters) {
+          requestObj.query = message.queryStringParameters;
         }
 
         // TODO - add query string //

@@ -1,3 +1,5 @@
+/* globals createRequest */
+
 import { expect } from 'chai';
 import '../../../test/common';
 
@@ -12,23 +14,6 @@ describe('tenant.api.test.js - Tenant beta API', () => {
   after(async () => {
     await TenantManager.deleteForTestSuite('testing2');
   });
-
-  const createRequest = (headers, method, path, payload) => {
-    const message = {
-      resource: path,
-      path,
-      httpMethod: method,
-      queryStringParameters: null,
-      multiValueQueryStringParameters: headers,
-      pathParameters: null,
-      stageVariables: null,
-      isBase64Encoded: true
-    };
-    if (payload) {
-      message.body = Buffer.from(JSON.stringify(payload)).toString('base64');
-    }
-    return message;
-  };
 
   it('should install, update, uninstall a SINGLE tenant on /tenant', async () => {
     let reqPayload = {
@@ -57,6 +42,7 @@ describe('tenant.api.test.js - Tenant beta API', () => {
       { tenantId: 'testing2' },
       'PUT',
       `/beta/tenant`,
+      undefined,
       reqPayload
     );
     response = await app(message);
@@ -72,6 +58,7 @@ describe('tenant.api.test.js - Tenant beta API', () => {
       undefined,
       'POST',
       `/beta/tenant/uninstall`,
+      undefined,
       reqPayload
     );
     response = await app(message);
@@ -85,7 +72,13 @@ describe('tenant.api.test.js - Tenant beta API', () => {
       tenantId: 'testing2',
       user: 'test'
     };
-    message = createRequest(undefined, 'POST', `/beta/tenant`, reqPayload);
+    message = createRequest(
+      undefined,
+      'POST',
+      `/beta/tenant`,
+      undefined,
+      reqPayload
+    );
     response = await app(message);
     payload = JSON.parse(response.body);
     expect(payload.noFraudUsername).to.equal('Test');
