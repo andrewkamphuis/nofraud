@@ -8,12 +8,7 @@ const model = (sequelize, DataTypes) => {
         lowercase: true,
         primaryKey: true
       },
-      noFraudUsername: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        trim: true
-      },
-      noFraudPassword: {
+      noFraudAPIToken: {
         allowNull: false,
         type: DataTypes.STRING,
         trim: true

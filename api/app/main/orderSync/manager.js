@@ -2,22 +2,10 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 import { sendToFifoQueue } from '../../helpers/sqsHelper.js';
-// import { TenantManager } from '../tenant/manager.js';
+import { TenantManager } from '../tenant/manager';
 
 import { DAO } from './dao.js';
 import { Gateway } from './gateway.js';
-
-// let VINOSHIPPER_API_URL;
-// if (process.env.NODE_ENV === 'production') {
-//   VINOSHIPPER_API_URL = 'https://zlminc.dev'; // TODO update to production URL when going live.
-// } else {
-//   VINOSHIPPER_API_URL = 'https://zlminc.dev';
-// }
-
-// export const listForIds = async (securityObj, ids) => {
-//   const orderSync = await Gateway.listForIds(securityObj, ids);
-//   return orderSync;
-// };
 
 export const get = async (securityObj, id) => {
   const orderSync = await DAO.get(securityObj, id);
@@ -48,7 +36,8 @@ export const checkStatus = async (securityObj, id) => {
   // Get order at C7
   const c7order = await getCommerce7Order(securityObj.tenantId, id);
   // Attempt to sync order
-  const attempt = await checkStatusWithNoFraud(securityObj, c7order);
+  const settings = await TenantManager.get(securityObj);
+  const attempt = await checkStatusWithNoFraud(securityObj, settings, c7order);
   // Is order in our database
 
   try {
@@ -64,11 +53,9 @@ export const checkStatus = async (securityObj, id) => {
   }
 };
 
-export const cancelAtNoFraud = async (securityObj, id) => {
-  // Get order at C7
-  const c7order = await getCommerce7Order(securityObj.tenantId, id);
+export const cancelAtNoFraud = async (securityObj, id, params) => {
   // Attempt to sync order
-  const attempt = await cancelWithNoFraud(securityObj, c7order);
+  const attempt = await cancelWithNoFraud(securityObj, params);
   // Is order in our database
 
   try {
@@ -83,17 +70,6 @@ export const cancelAtNoFraud = async (securityObj, id) => {
     throw err;
   }
 };
-
-// export const voidSync = async (securityObj, id) => {
-//   // Get order at C7
-//   const c7order = await getCommerce7Order(securityObj.tenantId, id);
-//   // Attempt to void order
-//   const attempt = await attemptVoidWithNoFraud(securityObj, c7order);
-//   // Is order in our database
-//   let orderSync = await DAO.get(securityObj, id);
-//   orderSync = updateFromSync(securityObj, id, attempt);
-//   return orderSync;
-// };
 
 export const webhook = async (params) => {
   const message = {
@@ -110,22 +86,18 @@ export const webhookFromSQS = async (message) => {
   await sync(securityObj, orderId);
 };
 
-// export const notRequired = async (securityObj, id) => {
-//   const now = new Date();
-//   const params = {
-//     attemptDate: now.toISOString(),
-//     type: 'Not Required To Send'
-//   };
-//   let orderSync = await DAO.get(securityObj, id);
-//   orderSync = updateFromSync(securityObj, id, params);
-//   return orderSync;
-// };
-
 const getCommerce7Order = async (tenantId, id) => {
   const url = `${process.env.C7_API_URL}/v1/order/${id}`;
   const response = await axios.get(url, axiosHeader(tenantId));
   const order = response.data;
   return order;
+};
+
+const getCommerce7Settings = async (tenantId) => {
+  const url = `${process.env.C7_API_URL}/v2/setting/for-web`;
+  const response = await axios.get(url, axiosHeader(tenantId));
+  const settings = response.data;
+  return settings;
 };
 
 // export const attemptSyncInTest = async (securityObj, c7order) => {
@@ -139,311 +111,371 @@ const getCommerce7Order = async (tenantId, id) => {
 
 // eslint-disable-next-line no-unused-vars
 const attemptSyncWithNoFraud = async (securityObj, c7order) => {
-  // const response = {
-  //   id: '16f235a0-e4a3-529c-9b83-bd15fe722110',
-  //   decision: 'fail',
-  //   message: 'Declined'
-  // };
-  const now = new Date();
-  const response = {
-    attemptDate: now.toISOString(),
-    type: 'fail',
-    errors: [
-      {
-        message: `Declined`
-      }
-    ]
-  };
   // TODO - write this whole function
-  // if (c7order.orderDeliveryMethod !== 'Ship') {
-  //   const response = invalidDeliveryMethod(c7order);
-  //   return response;
-  // }
+  if (c7order.channel !== 'Web') {
+    const response = invalidChannel();
+    return response;
+  }
 
-  // if (c7order.shipTo?.countryCode !== 'US') {
-  //   const response = invalidateShipToCountryCode();
-  //   return response;
-  // }
+  if (!c7order.connectionInformation?.customerIpAddress) {
+    const response = invalidIPAddress();
+    return response;
+  }
 
-  // const settings = await TenantManager.getWithSensitiveVariables(securityObj);
-  // if (!settings.stateCodes.includes(c7order.shipTo?.stateCode)) {
-  //   const response = invalidateShipToStateCode(c7order);
-  //   return response;
-  // }
+  if (!c7order.customer) {
+    const response = invalidCustomer();
+    return response;
+  }
 
-  // const payload = noFraudPayload(c7order);
+  if (c7order.orderDeliveryMethod !== 'Ship') {
+    const response = invalidOrderDeliveryMethod();
+    return response;
+  }
 
-  // const url = `${VINOSHIPPER_API_URL}/api/v3/p/orders`;
-  // let response;
-  // try {
-  //   const axiosResponse = await axios.post(url, payload, {
-  //     auth: {
-  //       username: settings.noFraudUsername,
-  //       password: settings.noFraudPassword
-  //     }
-  //   });
-  //   console.log('-------------------response', axiosResponse);
-  //   response = processNoFraudResponse(axiosResponse);
-  // } catch (err) {
-  //   console.log('-------------------error', err);
-  //   response = processNoFraudErrorResponse(err.response);
-  // }
+  if (successfulCreditCardAttemptCount(c7order) === 0) {
+    const response = invalidTender();
+    return response;
+  }
+
+  const settings = await TenantManager.get(securityObj);
+  const payload = await noFraudPayload(securityObj, settings, c7order);
+
+  const url = process.env.NOFRAUD_API_URL;
+  let response;
+  try {
+    const axiosResponse = await axios.post(url, payload);
+    // console.log('-------------------response', axiosResponse);
+    response = processNoFraudResponse(axiosResponse);
+  } catch (err) {
+    // console.log('-------------------error', err);
+    response = processNoFraudErrorResponse(err.response);
+  }
 
   return response;
 };
 
-const checkStatusWithNoFraud = async (securityObj, c7order) => {
-  // const response = {
-  //   id: '16f235a0-e4a3-529c-9b83-bd15fe722110',
-  //   decision: 'fail',
-  //   message: 'Declined'
-  // };
-  const now = new Date();
-  const response = {
-    attemptDate: now.toISOString(),
-    type: 'fail',
-    errors: [
-      {
-        message: `Declined`
-      }
-    ]
-  };
-  // TODO - write this whole function
-  // if (c7order.orderDeliveryMethod !== 'Ship') {
-  //   const response = invalidDeliveryMethod(c7order);
-  //   return response;
-  // }
-
-  // if (c7order.shipTo?.countryCode !== 'US') {
-  //   const response = invalidateShipToCountryCode();
-  //   return response;
-  // }
-
-  // const settings = await TenantManager.getWithSensitiveVariables(securityObj);
-  // if (!settings.stateCodes.includes(c7order.shipTo?.stateCode)) {
-  //   const response = invalidateShipToStateCode(c7order);
-  //   return response;
-  // }
-
-  // const payload = noFraudPayload(c7order);
-
-  // const url = `${VINOSHIPPER_API_URL}/api/v3/p/orders`;
-  // let response;
-  // try {
-  //   const axiosResponse = await axios.post(url, payload, {
-  //     auth: {
-  //       username: settings.noFraudUsername,
-  //       password: settings.noFraudPassword
-  //     }
-  //   });
-  //   console.log('-------------------response', axiosResponse);
-  //   response = processNoFraudResponse(axiosResponse);
-  // } catch (err) {
-  //   console.log('-------------------error', err);
-  //   response = processNoFraudErrorResponse(err.response);
-  // }
+const checkStatusWithNoFraud = async (securityObj, settings, c7order) => {
+  const url = `${process.env.NOFRAUD_API_URL}/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
+  let response;
+  try {
+    const axiosResponse = await axios.get(url);
+    // console.log('-------------------response', axiosResponse);
+    response = processNoFraudResponse(axiosResponse);
+  } catch (err) {
+    // console.log('-------------------error', err);
+    response = processNoFraudErrorResponse(err.response);
+  }
 
   return response;
 };
 
-const cancelWithNoFraud = async (securityObj, c7order) => {
-  // const response = {
-  //   id: '16f235a0-e4a3-529c-9b83-bd15fe722110',
-  //   decision: 'fail',
-  //   message: 'Declined'
-  // };
+const cancelWithNoFraud = async (securityObj, params) => {
   const now = new Date();
-  const response = {
-    attemptDate: now.toISOString(),
-    type: 'fail',
-    errors: [
-      {
-        message: `Declined`
-      }
-    ]
+
+  const settings = await TenantManager.get(securityObj);
+
+  const payload = {
+    nf_token: settings.noFraudAPIToken,
+    transaction_id: params.transactionId
   };
-  // TODO - write this whole function
-  // if (c7order.orderDeliveryMethod !== 'Ship') {
-  //   const response = invalidDeliveryMethod(c7order);
-  //   return response;
-  // }
 
-  // if (c7order.shipTo?.countryCode !== 'US') {
-  //   const response = invalidateShipToCountryCode();
-  //   return response;
-  // }
-
-  // const settings = await TenantManager.getWithSensitiveVariables(securityObj);
-  // if (!settings.stateCodes.includes(c7order.shipTo?.stateCode)) {
-  //   const response = invalidateShipToStateCode(c7order);
-  //   return response;
-  // }
-
-  // const payload = noFraudPayload(c7order);
-
-  // const url = `${VINOSHIPPER_API_URL}/api/v3/p/orders`;
-  // let response;
-  // try {
-  //   const axiosResponse = await axios.post(url, payload, {
-  //     auth: {
-  //       username: settings.noFraudUsername,
-  //       password: settings.noFraudPassword
-  //     }
-  //   });
-  //   console.log('-------------------response', axiosResponse);
-  //   response = processNoFraudResponse(axiosResponse);
-  // } catch (err) {
-  //   console.log('-------------------error', err);
-  //   response = processNoFraudErrorResponse(err.response);
-  // }
+  const url = `${process.env.NOFRAUD_API_URL}/api/v1/transaction-update/cancel-transaction`;
+  let response;
+  try {
+    await axios.post(url, payload);
+    response = {
+      attemptDate: now.toISOString(),
+      type: 'Cancelled'
+    };
+  } catch (err) {
+    console.log('-------------------error', err);
+    response = processNoFraudErrorResponse(err.response);
+  }
 
   return response;
 };
 
-// const processNoFraudResponse = (axiosResponse) => {
-//   const now = new Date();
-//   if (axiosResponse.status === 200 && axiosResponse.data.status === 'SUCCESS') {
-//     const response = {
-//       attemptDate: now.toISOString(),
-//       type: 'Sent To NoFraud'
-//       // errors: [{  message: error }]
-//     };
-//     return response;
-//   }
-//   if (axiosResponse.data.status && axiosResponse.data.orderProblems) {
-//     const errors = axiosResponse.data.orderProblems.map((i) => ({
-//       message: i.description
-//     }));
-//     const response = {
-//       attemptDate: now.toISOString(),
-//       type: 'Failed To Send',
-//       errors
-//     };
-//     return response;
-//   }
-//   throw new Error('Unknown error');
-// };
+const processNoFraudResponse = (axiosResponse) => {
+  const now = new Date();
+  if (axiosResponse.data.decision === 'pass') {
+    const response = {
+      attemptDate: now.toISOString(),
+      type: 'Pass',
+      transactionId: axiosResponse.data.transaction_id
+      // errors: [{  message: error }]
+    };
+    return response;
+  }
+  if (axiosResponse.data.decision === 'fail') {
+    const response = {
+      attemptDate: now.toISOString(),
+      type: 'Fail',
+      transactionId: axiosResponse.data.transaction_id,
+      errors: [{ message: axiosResponse.data.message }]
+    };
+    return response;
+  }
+  if (axiosResponse.data.decision === 'review') {
+    const response = {
+      attemptDate: now.toISOString(),
+      type: 'Needs Review',
+      transactionId: axiosResponse.data.transaction_id,
+      errors: [{ message: axiosResponse.data.message }]
+    };
+    return response;
+  }
 
-// const processNoFraudErrorResponse = (axiosResponse) => {
-//   const now = new Date();
-//   if ([401, 403, 404, 500].includes(axiosResponse.status)) {
-//     let error = 'Unknown server error';
-//     if (axiosResponse.status === 401) {
-//       error = 'Authentication failed to NoFraud';
-//     }
-//     if (axiosResponse.status === 403) {
-//       error = 'Insufficient permission with NoFraud';
-//     }
-//     if (axiosResponse.status === 404) {
-//       error = 'Not Found with NoFraud';
-//     }
-//     if (axiosResponse.status === 500) {
-//       error = 'Server Error at NoFraud';
-//     }
+  throw new Error('Unknown error');
+};
 
-//     const response = {
-//       attemptDate: now.toISOString(),
-//       type: 'Failed To Send',
-//       errors: [{ message: error }]
-//     };
-//     return response;
-//   }
+const processNoFraudErrorResponse = (axiosResponse) => {
+  const now = new Date();
+  if ([403, 400, 500].includes(axiosResponse.status)) {
+    let error = 'Unknown server error';
+    if (axiosResponse.status === 403) {
+      error = 'Authentication failed to NoFraud';
+    }
+    if (axiosResponse.status === 400) {
+      error = axiosResponse.data.Errors?.[0];
+    }
+    if (axiosResponse.status === 500) {
+      error = axiosResponse.data.Errors?.[0];
+    }
 
-//   if (axiosResponse.status === 400) {
-//     const reply = axiosResponse.data;
-//     const { error } = reply;
-//     // TODO do we want to handle these?
-//     // VALIDATION COMPLIANCE PAYMENT_FAILURE SERVER_ERROR ACCESS_DENIED CONFLICT
+    const response = {
+      attemptDate: now.toISOString(),
+      type: 'Fail',
+      errors: [{ message: error }]
+    };
+    return response;
+  }
 
-//     const response = {
-//       attemptDate: now.toISOString(),
-//       type: 'Failed To Send',
-//       errors: [
-//         {
-//           message: error?.errors?.[0]?.description || error.type
-//         }
-//       ]
-//     };
-//     return response;
-//   }
+  throw new Error('Unknown error');
+};
 
-//   if (axiosResponse.status === 200) {
-//     const response = {
-//       attemptDate: now.toISOString(),
-//       type: 'Sent To NoFraud'
-//       // errors: [{  message: error }]
-//     };
-//     return response;
-//   }
+const decimalFormat = (number, noScale) => {
+  if (Number.isNaN(number)) {
+    throw new Error('Invalid Number');
+  }
+  if (noScale) {
+    const results = parseFloat(number);
+    return results.toFixed(2);
+  }
+  const results = parseFloat(number / 100);
+  return results.toFixed(2);
+};
 
-//   throw new Error('Unknown error');
-// };
+const dateFormat = (date) => {
+  date = new Date(date);
+  const year = date.getFullYear();
 
-// const noFraudPayload = (c7order) => {
-//   const customer = {
-//     email: c7order.customer.emails[0].email,
-//     firstName: c7order.customer.firstName || c7order.shipTo.firstName,
-//     lastName: c7order.customer.lastName || c7order.shipTo.lastName
-//   };
+  let month = (1 + date.getMonth()).toString();
+  month = month.length > 1 ? month : `0${month}`;
 
-//   if (c7order.billTo) {
-//     customer.address = {
-//       street1: c7order.billTo.address,
-//       street2: c7order.billTo.address2 || '',
-//       city: c7order.billTo.city,
-//       postalCode: c7order.billTo.zipCode,
-//       stateCode: c7order.billTo.stateCode
-//     };
-//   }
+  let day = date.getDate().toString();
+  day = day.length > 1 ? day : `0${day}`;
 
-//   const { phone } = c7order.shipTo;
-//   const payload = {
-//     customer,
-//     shipToAddress: {
-//       country: 'US',
-//       phone: {
-//         number: phone.length === 12 && phone.slice(2),
-//         country: 1
-//       },
-//       street1: c7order.shipTo.address,
-//       street2: c7order.shipTo.address2 || '',
-//       city: c7order.shipTo.city,
-//       postalCode: c7order.shipTo.zipCode,
-//       stateCode: c7order.shipTo.stateCode
-//     },
-//     shippingRate: {
-//       carrier: c7order.shipping[0].carrier,
-//       rateCode: c7order.shipping[0].code,
-//       price: c7order.shipping[0].price / 100
-//     },
-//     products: [],
-//     orderNumber: c7order.orderNumber,
-//     productIdType: 'SKU',
-//     Paid: true
-//   };
+  return `${month}/${day}/${year}`;
+};
 
-//   payload.products = c7order.items.map((item) => ({
-//     productId: item.sku,
-//     quantity: item.quantity,
-//     price: item.price / 100
-//   }));
+const expiryNumberFormat = (creditCard) => {
+  const year = creditCard.expiryYr.toString().slice(-2);
+  const month = creditCard.expiryMo.toString();
+  if (month.length === 1) {
+    return `0${month}/${year}`;
+  }
+  return `${month}/${year}`;
+};
 
-//   return payload;
-// };
+const creditCardAttemptCount = (c7order) => {
+  let count = 0;
+  if (c7order.tenders) {
+    c7order.tenders.forEach((tender) => {
+      if (tender.tenderType === 'Credit Card') {
+        count += 1;
+      }
+    });
+  }
+  return count;
+};
 
-// const invalidDeliveryMethod = (c7order) => {
-//   const now = new Date();
-//   const response = {
-//     attemptDate: now.toISOString(),
-//     type: 'Not Required To Send',
-//     errors: [
-//       {
-//         message: `Order Delivery Method is ${c7order.orderDeliveryMethod}`
-//       }
-//     ]
-//   };
-//   return response;
-// };
+const successfulCreditCardAttemptCount = (c7order) => {
+  let count = 0;
+  if (c7order.tenders) {
+    c7order.tenders.forEach((tender) => {
+      if (
+        tender.tenderType === 'Credit Card' &&
+        tender.chargeStatus === 'Success'
+      ) {
+        count += 1;
+      }
+    });
+  }
+  return count;
+};
+
+const noFraudPayload = async (securityObj, settings, c7order) => {
+  const c7Settings = await getCommerce7Settings(securityObj.tenantId);
+
+  const { billTo, shipTo } = c7order;
+  if (!c7order.billTo) {
+    c7order.billTo = c7order.shipTo;
+  }
+
+  const payload = {
+    nfToken: settings.noFraudAPIToken,
+    amount: decimalFormat(c7order.total),
+    gatewayName: c7Settings.payment.gateway,
+    gatewayStatus: 'pass',
+    cardAttempts: creditCardAttemptCount(c7order),
+    customerIP: c7order.connectionInformation.customerIpAddress,
+    avsResultCode: 'U', // TODO - what is this
+    cvvResultCode: '1', // TODO - what is this
+    currencyCode: c7Settings.currency,
+    order: {
+      invoiceNumber: c7order.orderNumber,
+      orderType: 'one-time'
+    },
+    billTo: {
+      firstName: billTo.firstName,
+      lastName: billTo.lastName,
+      company: billTo.company,
+      address: billTo.address,
+      city: billTo.city,
+      state: billTo.stateCode,
+      zip: billTo.zipCode,
+      country: billTo.countryCode,
+      phoneNumber: billTo.phone
+    },
+    shipTo: {
+      firstName: shipTo.firstName,
+      lastName: shipTo.lastName,
+      company: shipTo.company,
+      address: shipTo.address,
+      city: shipTo.city,
+      state: shipTo.stateCode,
+      zip: shipTo.zipCode,
+      country: shipTo.countryCode
+    }
+  };
+
+  const firstCreditCard = c7order.tenders.find(
+    (t) => t.tenderType === 'Credit Card' && t.chargeStatus === 'Success'
+  );
+
+  /*
+      discountPrice: '5.00', // TODO - figure out
+    discountPercentage: '5%', // TODO - figure out
+*/
+
+  payload.payment = {
+    method: 'Credit Card',
+    creditCard: {
+      last4: firstCreditCard.creditCard.maskedCardNumber.slice(-4),
+      cardType: firstCreditCard.creditCard.cardBrand,
+      expirationDate: expiryNumberFormat(firstCreditCard.creditCard)
+    }
+  };
+
+  if (c7order.customer) {
+    payload.customer = {
+      id: c7order.customer.id,
+      email: c7order.customer.emails[0].email,
+      joinedOn: dateFormat(c7order.customer.createdAt),
+      lastPurchaseDate:
+        c7order.customer.orderInformation.lastOrderDate &&
+        dateFormat(c7order.customer.orderInformation.lastOrderDate),
+      totalPreviousPurchases: c7order.customer.orderInformation.orderCount,
+      totalPurchaseValue: decimalFormat(
+        c7order.customer.orderInformation.lifetimeValue
+      )
+    };
+  }
+
+  if (c7order?.shipping?.length === 1) {
+    payload.shippingAmount = decimalFormat(c7order.shipping[0].price);
+    payload.shippingMethod = decimalFormat(c7order.shipping[0].title);
+  }
+
+  payload.lineItems = c7order.items.map((item) => ({
+    sku: item.sku,
+    name: item.productTitle,
+    price: decimalFormat(item.price),
+    quantity: item.quantity
+  }));
+
+  return payload;
+};
+
+const invalidChannel = () => {
+  const now = new Date();
+  const response = {
+    attemptDate: now.toISOString(),
+    type: 'Not Required',
+    errors: [
+      {
+        message: `Order Channel is not Web`
+      }
+    ]
+  };
+  return response;
+};
+
+const invalidIPAddress = () => {
+  const now = new Date();
+  const response = {
+    attemptDate: now.toISOString(),
+    type: 'Not Required',
+    errors: [
+      {
+        message: `Order does not have a Customer IP Address`
+      }
+    ]
+  };
+  return response;
+};
+
+const invalidCustomer = () => {
+  const now = new Date();
+  const response = {
+    attemptDate: now.toISOString(),
+    type: 'Not Required',
+    errors: [
+      {
+        message: `Order does not have a Customer`
+      }
+    ]
+  };
+  return response;
+};
+
+const invalidOrderDeliveryMethod = () => {
+  const now = new Date();
+  const response = {
+    attemptDate: now.toISOString(),
+    type: 'Not Required',
+    errors: [
+      {
+        message: `Order is not a shipping order`
+      }
+    ]
+  };
+  return response;
+};
+
+const invalidTender = () => {
+  const now = new Date();
+  const response = {
+    attemptDate: now.toISOString(),
+    type: 'Not Required',
+    errors: [
+      {
+        message: `Order does not have a credit card processed`
+      }
+    ]
+  };
+  return response;
+};
 
 // const invalidateShipToCountryCode = () => {
 //   const now = new Date();
@@ -536,7 +568,8 @@ const updateFromSync = async (securityObj, id, attempt) => {
   const params = {
     id,
     lastSyncAttemptDate: attempt.attemptDate,
-    type: attempt.type
+    type: attempt.type,
+    transactionId: attempt.transaction_id
   };
 
   orderSync = await update(securityObj, params);
