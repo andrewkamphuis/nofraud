@@ -19,7 +19,7 @@ export const c7Order = () => {
     fulfillmentStatus: 'Not Fulfilled',
     shippingStatus: 'Not Tracked',
     cartId: '475a3aaa-bf00-4f9c-bdc2-b41af5fae151',
-    channel: 'Inbound',
+    channel: 'Web',
     posProfileId: null,
     customerId: 'aaa0d408-0ce7-467c-ac87-479a7eed50b5',
     orderDeliveryMethod: 'Ship',
@@ -2069,6 +2069,951 @@ export const webhook = () => {
     user: 'andrew@commerce7.com',
     tenantId: 'testing',
     webHookId: 'f8089f33-e473-4d38-ac1d-36a75ad864ce'
+  };
+  return response;
+};
+
+export const settings = () => {
+  const response = {
+    url: 'https://spectra-winery-demo-v2.v2-template.commerce7.com',
+    timeZone: 'America/Los_Angeles',
+    timeFormat: '12 Hour',
+    defaultCountryCode: 'US',
+    defaultAddressFormat: {
+      label: 'United States',
+      code: 'US',
+      address: {
+        label: 'Address',
+        autoComplete: 'address-line1'
+      },
+      address2: {
+        label: 'Address 2',
+        isRequired: false,
+        description: 'Apartment, suite, floor, etc.',
+        autoComplete: 'address-line2'
+      },
+      zipCode: {
+        label: 'Zip Code',
+        autoComplete: 'postal-code',
+        isZipLookup: true,
+        helpLabel: 'Enter Zip Code for City and State',
+        normalize: {
+          regex: '[^0-9/-]',
+          regexFlags: 'g',
+          value: ''
+        },
+        format: {
+          minLength: 6,
+          regex: '^([0-9]{5}){1}(-)?([0-9]{1,4}){1}$',
+          regexFlags: 'gi',
+          value: '$1-$3'
+        },
+        validate: {
+          regex: '^[0-9]{5}(?:-[0-9]{4})?$',
+          errorMessage:
+            'Please enter a valid zip code (such as 12345 or 12345-1234)'
+        }
+      },
+      city: {
+        label: 'City',
+        autoComplete: 'address-level2'
+      },
+      stateCode: {
+        label: 'State',
+        autoComplete: 'address-level1',
+        options: [
+          {
+            value: 'AL',
+            option: 'Alabama'
+          },
+          {
+            value: 'AK',
+            option: 'Alaska'
+          },
+          {
+            value: 'AZ',
+            option: 'Arizona'
+          },
+          {
+            value: 'AR',
+            option: 'Arkansas'
+          },
+          {
+            value: 'CA',
+            option: 'California'
+          },
+          {
+            value: 'CO',
+            option: 'Colorado'
+          },
+          {
+            value: 'CT',
+            option: 'Connecticut'
+          },
+          {
+            value: 'DE',
+            option: 'Delaware'
+          },
+          {
+            value: 'FL',
+            option: 'Florida'
+          },
+          {
+            value: 'GA',
+            option: 'Georgia'
+          },
+          {
+            value: 'HI',
+            option: 'Hawaii'
+          },
+          {
+            value: 'ID',
+            option: 'Idaho'
+          },
+          {
+            value: 'IL',
+            option: 'Illinois'
+          },
+          {
+            value: 'IN',
+            option: 'Indiana'
+          },
+          {
+            value: 'IA',
+            option: 'Iowa'
+          },
+          {
+            value: 'KS',
+            option: 'Kansas'
+          },
+          {
+            value: 'KY',
+            option: 'Kentucky'
+          },
+          {
+            value: 'LA',
+            option: 'Louisiana'
+          },
+          {
+            value: 'ME',
+            option: 'Maine'
+          },
+          {
+            value: 'MD',
+            option: 'Maryland'
+          },
+          {
+            value: 'MA',
+            option: 'Massachusetts'
+          },
+          {
+            value: 'MI',
+            option: 'Michigan'
+          },
+          {
+            value: 'MN',
+            option: 'Minnesota'
+          },
+          {
+            value: 'MS',
+            option: 'Mississippi'
+          },
+          {
+            value: 'MO',
+            option: 'Missouri'
+          },
+          {
+            value: 'MT',
+            option: 'Montana'
+          },
+          {
+            value: 'NE',
+            option: 'Nebraska'
+          },
+          {
+            value: 'NV',
+            option: 'Nevada'
+          },
+          {
+            value: 'NH',
+            option: 'New Hampshire'
+          },
+          {
+            value: 'NJ',
+            option: 'New Jersey'
+          },
+          {
+            value: 'NM',
+            option: 'New Mexico'
+          },
+          {
+            value: 'NY',
+            option: 'New York'
+          },
+          {
+            value: 'NC',
+            option: 'North Carolina'
+          },
+          {
+            value: 'ND',
+            option: 'North Dakota'
+          },
+          {
+            value: 'OH',
+            option: 'Ohio'
+          },
+          {
+            value: 'OK',
+            option: 'Oklahoma'
+          },
+          {
+            value: 'OR',
+            option: 'Oregon'
+          },
+          {
+            value: 'PA',
+            option: 'Pennsylvania'
+          },
+          {
+            value: 'RI',
+            option: 'Rhode Island'
+          },
+          {
+            value: 'SC',
+            option: 'South Carolina'
+          },
+          {
+            value: 'SD',
+            option: 'South Dakota'
+          },
+          {
+            value: 'TN',
+            option: 'Tennessee'
+          },
+          {
+            value: 'TX',
+            option: 'Texas'
+          },
+          {
+            value: 'UT',
+            option: 'Utah'
+          },
+          {
+            value: 'VT',
+            option: 'Vermont'
+          },
+          {
+            value: 'VA',
+            option: 'Virginia'
+          },
+          {
+            value: 'WA',
+            option: 'Washington'
+          },
+          {
+            value: 'WV',
+            option: 'West Virginia'
+          },
+          {
+            value: 'WI',
+            option: 'Wisconsin'
+          },
+          {
+            value: 'WY',
+            option: 'Wyoming'
+          },
+          {
+            value: 'DC',
+            option: 'District of Columbia'
+          },
+          {
+            value: 'AS',
+            option: 'American Samoa'
+          },
+          {
+            value: 'GU',
+            option: 'Guam'
+          },
+          {
+            value: 'MP',
+            option: 'Northern Mariana Islands'
+          },
+          {
+            value: 'PR',
+            option: 'Puerto Rico'
+          },
+          {
+            value: 'UM',
+            option: 'United States Minor Outlying Islands'
+          },
+          {
+            value: 'VI',
+            option: 'Virgin Islands'
+          }
+        ],
+        states: {
+          AL: 'Alabama',
+          AK: 'Alaska',
+          AZ: 'Arizona',
+          AR: 'Arkansas',
+          CA: 'California',
+          CO: 'Colorado',
+          CT: 'Connecticut',
+          DE: 'Delaware',
+          FL: 'Florida',
+          GA: 'Georgia',
+          HI: 'Hawaii',
+          ID: 'Idaho',
+          IL: 'Illinois',
+          IN: 'Indiana',
+          IA: 'Iowa',
+          KS: 'Kansas',
+          KY: 'Kentucky',
+          LA: 'Louisiana',
+          ME: 'Maine',
+          MD: 'Maryland',
+          MA: 'Massachusetts',
+          MI: 'Michigan',
+          MN: 'Minnesota',
+          MS: 'Mississippi',
+          MO: 'Missouri',
+          MT: 'Montana',
+          NE: 'Nebraska',
+          NV: 'Nevada',
+          NH: 'New Hampshire',
+          NJ: 'New Jersey',
+          NM: 'New Mexico',
+          NY: 'New York',
+          NC: 'North Carolina',
+          ND: 'North Dakota',
+          OH: 'Ohio',
+          OK: 'Oklahoma',
+          OR: 'Oregon',
+          PA: 'Pennsylvania',
+          RI: 'Rhode Island',
+          SC: 'South Carolina',
+          SD: 'South Dakota',
+          TN: 'Tennessee',
+          TX: 'Texas',
+          UT: 'Utah',
+          VT: 'Vermont',
+          VA: 'Virginia',
+          WA: 'Washington',
+          WV: 'West Virginia',
+          WI: 'Wisconsin',
+          WY: 'Wyoming',
+          DC: 'District of Columbia',
+          AS: 'American Samoa',
+          GU: 'Guam',
+          MP: 'Northern Mariana Islands',
+          PR: 'Puerto Rico',
+          UM: 'United States Minor Outlying Islands',
+          VI: 'Virgin Islands'
+        }
+      },
+      formFormat: [['address'], ['address2'], ['zipCode', 'city', 'stateCode']],
+      viewFormat: [
+        ['address'],
+        ['address2'],
+        ['city', 'space', 'stateCode', 'space', 'zipCode']
+      ],
+      compliance: {
+        AL: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        AK: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        AZ: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        AR: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        CA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        CO: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        CT: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: true
+        },
+        DE: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        FL: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        GA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        HI: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        ID: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        IL: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        IN: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        IA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        KS: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        KY: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        LA: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: true
+        },
+        ME: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MD: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MI: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: true
+        },
+        MN: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MS: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MO: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MT: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NE: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NV: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NH: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NJ: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NM: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NY: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        NC: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        ND: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        OH: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        OK: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        OR: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        PA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        RI: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        SC: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        SD: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: false
+        },
+        TN: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        TX: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        UT: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        VT: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        VA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        WA: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        WV: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        WI: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: true,
+          requiresShipToBirthDate: true
+        },
+        WY: {
+          requiresBillToAddress: true,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        DC: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        AS: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        GU: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        MP: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        PR: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        UM: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        },
+        VI: {
+          requiresBillToAddress: false,
+          requiresBillToBirthDate: false,
+          requiresShipToBirthDate: false
+        }
+      }
+    },
+    currency: 'USD',
+    defaultWeightUnit: 'Lbs',
+    logo: 'https://images.commerce7.com/spectra-winery-demo-v2/images/logo/spectra-logo-1623862979478.svg',
+    location: {
+      company: null,
+      address: '1000 North Street',
+      address2: null,
+      city: 'Napa',
+      stateCode: 'CA',
+      zipCode: '94558',
+      countryCode: 'US',
+      phone: '+16046135343'
+    },
+    logoLinkUrl: '/',
+    companyName: 'Spectra Winery Demo V2',
+    facebookLogin: {
+      usesFacebookLogin: true,
+      appId: '433362083689258'
+    },
+    googleLogin: {
+      usesGoogleLogin: true,
+      clientId:
+        '469980426778-e9i5dr4h461m4e5isnd37sr65d27qm2a.apps.googleusercontent.com'
+    },
+    primaryPhone: '+16047553518',
+    primaryEmail: 'info@commerce7.com',
+    continueShopping: '/collection/all-wines',
+    routerType: 'Browser',
+    baseRoute: {
+      profile: '/profile',
+      product: '/product',
+      reservation: '/reservation',
+      checkout: '/checkout',
+      collection: '/collection',
+      cart: '/cart',
+      club: '/club'
+    },
+    clubList: '/club',
+    reservationList: '/reservation',
+    operatingCountryCodes: ['GB', 'CA', 'US', 'AU', 'NZ'],
+    operatingStateCodes: [
+      'AK',
+      'AZ',
+      'AR',
+      'CA',
+      'CO',
+      'CT',
+      'DE',
+      'GA',
+      'ID',
+      'IL',
+      'IN',
+      'IA',
+      'KS',
+      'KY',
+      'LA',
+      'ME',
+      'MD',
+      'MA',
+      'MI',
+      'MN',
+      'MS',
+      'MO',
+      'MT',
+      'NE',
+      'NV',
+      'NH',
+      'NJ',
+      'NM',
+      'NC',
+      'ND',
+      'OH',
+      'OK',
+      'OR',
+      'RI',
+      'SD',
+      'TX',
+      'VT',
+      'VA',
+      'WA',
+      'WV',
+      'WI',
+      'WY',
+      'DC',
+      'AS',
+      'GU',
+      'MP',
+      'PR',
+      'UM',
+      'VI',
+      'Auckland',
+      'Bay of Plenty',
+      'Canterbury',
+      'Chatham Islands Territory',
+      'Gisborne',
+      "Hawke's Bay",
+      'Marlborough',
+      'Manawatu-Wanganui',
+      'Nelson',
+      'Northland',
+      'Otago',
+      'Southland',
+      'Tasman',
+      'Taranaki',
+      'Waikato',
+      'Wellington',
+      'West Coast',
+      'ACT',
+      'NSW',
+      'NT',
+      'QLD',
+      'SA',
+      'TAS',
+      'VIC',
+      'BC',
+      'AB',
+      'MB',
+      'NB',
+      'NL',
+      'NS',
+      'NU',
+      'ON',
+      'PE',
+      'QC',
+      'SK',
+      'YT'
+    ],
+    websiteMessages: {},
+    minimumAge: 21,
+    compliance: {
+      askForBillingAddress: 'Only When Required',
+      askForBillingBirthdate: 'Only When Required',
+      askForShippingBirthdate: 'Only When Required'
+    },
+    payment: {
+      gateway: 'No Gateway'
+    },
+    reservations: {
+      leadTimeInHours: 0,
+      availabilityStartTime: '10:00:00',
+      availabilityEndTime: '16:00:00',
+      availabilityStartGuestCount: 1,
+      availabilityEndGuestCount: 20
+    },
+    shipCompliant: {
+      usesShipCompliant: false,
+      usesCarrierPickupLocations: false,
+      carrierForPickupLocations: 'FedEx'
+    },
+    wineShipping: {
+      usesWineShipping: false,
+      customerNumber: '12345',
+      mode: 'Staging'
+    },
+    loyalty: {
+      hasLoyalty: true,
+      status: 'Active',
+      pointsOnCustomerCreate: 0,
+      arePointsEarnedOnShipping: true,
+      arePointsEarnedOnTaxes: true,
+      redemptionRate: 0.01,
+      redemptionLimitPercentage: 100,
+      tiers: [
+        {
+          id: '600323ed-a53b-436d-bc6d-e60467c66433',
+          title: 'Diamond Tier',
+          isBaseTier: false,
+          qualificationType: 'Yearly Value',
+          yearlyValueToQualify: 1000000,
+          earnRate: 10,
+          sortOrder: 0,
+          createdAt: '2023-03-28T18:04:58.533Z',
+          updatedAt: '2023-03-28T18:04:58.533Z'
+        },
+        {
+          id: '78c940c2-22c9-4b4d-9097-8dadd71d4631',
+          title: 'Silver Tier',
+          isBaseTier: false,
+          qualificationType: 'Club',
+          earnRate: 10,
+          sortOrder: 0,
+          createdAt: '2023-01-13T00:01:48.335Z',
+          updatedAt: '2023-01-13T00:01:48.335Z',
+          clubsToQualify: [
+            {
+              id: 'ac13f29f-d46a-4b46-8714-f83329220d5b',
+              title: 'Spectra Club 2023',
+              type: 'Traditional',
+              image: null,
+              content:
+                '<ul>\n<li>Receive 3 shipments a year</li>\n<li>6 hand-selected bottles are included in each shipment, with the option to edit and personalize your products</li>\n<li>Special access to new releases and award winners</li>\n<li>Complimentary shipping included on all purchases</li>\n<li>No club fees</li>\n</ul>',
+              emailInstructions: null,
+              webStatus: 'Available',
+              adminStatus: 'Available',
+              slug: 'spectra-club',
+              allowCustomersToCancel: true,
+              createdAt: '2021-06-15T20:51:07.299Z',
+              updatedAt: '2023-04-28T18:16:32.308Z',
+              seo: {
+                title: 'Spectra Club 2023',
+                description:
+                  'Receive 3 shipments a year\n6 hand-selected bottles are included in each shipment, with the option to edit and personalize your products\nSpecial access to...'
+              }
+            }
+          ]
+        },
+        {
+          id: 'cbd990a4-d532-11ec-b031-06ecb87952af',
+          title: 'Base Tier',
+          isBaseTier: true,
+          qualificationType: 'Lifetime Value',
+          lifetimeValueToQualify: 0,
+          earnRate: 0,
+          sortOrder: 0,
+          createdAt: '2022-05-16T16:11:08.000Z',
+          updatedAt: '2022-05-16T16:11:08.000Z'
+        },
+        {
+          id: 'eea9c9ed-be58-4bd9-9491-8dfc100a9659',
+          title: 'Gold Membership',
+          isBaseTier: false,
+          qualificationType: 'Yearly Value',
+          yearlyValueToQualify: 1000000,
+          earnRate: 7,
+          sortOrder: 0,
+          createdAt: '2022-11-14T23:08:25.393Z',
+          updatedAt: '2022-11-14T23:08:25.393Z'
+        }
+      ]
+    },
+    hasClubs: true,
+    hasReservations: true,
+    hasAllocations: false,
+    hasShipping: true,
+    createdAt: '2021-06-14T22:58:44.080Z',
+    apps: [
+      {
+        developerName: 'Treefrog Digital',
+        tenantId: 'spectra-winery-demo-v2',
+        developerUrl: 'https://commerce7.treefrogdigital.com/rating',
+        versionId: '84faf8d8-b847-414c-80f5-2303007c6120',
+        securities: [
+          {
+            requestType: 'Read',
+            securityId: 'ccb13ad5-3eef-447c-9a21-2a9bd0d8d2aa',
+            objectType: 'Order'
+          },
+          {
+            requestType: 'Read',
+            securityId: 'b608c052-4886-4a74-9d22-389fef19697c',
+            objectType: 'Setting'
+          }
+        ],
+        appId: 'rating',
+        versionNumber: 1,
+        extensions: [
+          {
+            hookData: {
+              icon: 'https://commerce7.treefrogdigital.com/wp-content/uploads/2021/06/ratingicon.svg',
+              section: 'Section',
+              url: 'https://ratingapi.tfdapps.com/v1/ordercard',
+              menuText: 'Text'
+            },
+            extensionId: 'cb2b3415-7c69-47e9-9963-cbf919361c27',
+            hookType: 'Card',
+            objectType: 'Order Detail'
+          },
+          {
+            hookData: {
+              icon: 'https://commerce7.treefrogdigital.com/wp-content/uploads/2021/06/ratingicon.svg',
+              section: 'Section',
+              url: 'https://ratingapi.tfdapps.com/v1/card',
+              menuText: 'Text'
+            },
+            extensionId: 'd7278b8d-2e9a-4fdc-9721-093016f3acfd',
+            hookType: 'Card',
+            objectType: 'Customer Detail'
+          },
+          {
+            hookData: {
+              icon: 'https://commerce7.treefrogdigital.com/wp-content/uploads/2021/07/ratingiconstar.svg',
+              title: 'Rating',
+              url: 'https://rating.tfdapps.com',
+              contextMenuType: 'Action'
+            },
+            extensionId: 'b9f3c318-3535-459e-a77b-14c7e1987a13',
+            hookType: 'Page',
+            objectType: 'Marketing Menu'
+          },
+          {
+            hookData: {
+              icon: 'https://commerce7.treefrogdigital.com/wp-content/uploads/2021/06/ratingicon.svg',
+              iFrameHeight: '150',
+              title: 'Rating',
+              url: 'https://rating.tfdapps.com/widget',
+              contextMenuType: 'Action'
+            },
+            extensionId: 'ca3c2806-41ae-4221-b2a6-df369a99642d',
+            hookType: 'Page',
+            objectType: 'Frontend Receipt Secondary'
+          }
+        ],
+        title: 'Rating'
+      }
+    ],
+    stripe: {
+      accountId: 'acct_1IwwdcIJRvx8CZtk'
+    },
+    cached: true
   };
   return response;
 };

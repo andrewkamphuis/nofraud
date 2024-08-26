@@ -7,9 +7,8 @@ import '../../../test/common';
 import { app } from '../../../../index.js';
 import { OrderSyncManager } from '../manager';
 
-// import { success } from './noFraudSamples';
-
-import { c7Order, webhook } from './sample';
+import { cancel, success } from './noFraudSamples';
+import { c7Order, settings, webhook } from './sample';
 
 describe('orderSync.api.test.js - Order Sync beta API', () => {
   const local = {
@@ -22,14 +21,22 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
         .get(/\/v1\/order\/.*/)
         .reply(200, c7Order())
         .persist();
-      // nock(process.env.VINOSHIPPER_API_URL)
-      //   .post(`/api/v3/p/orders`)
-      //   .reply(200, success())
-      //   .persist();
-      // nock(process.env.VINOSHIPPER_API_URL)
-      //   .post(/^\/api\/v3\/p\/orders\/.+\/cancel/)
-      //   .reply(200, success())
-      //   .persist();
+      nock(process.env.C7_API_URL)
+        .get(`/v2/setting/for-web`)
+        .reply(200, settings())
+        .persist();
+      nock(process.env.NOFRAUD_API_URL)
+        .post(`/`)
+        .reply(200, success())
+        .persist();
+      nock(process.env.NOFRAUD_API_URL)
+        .get(/^\/status_by_invoice\/.+\/.+/)
+        .reply(200, success())
+        .persist();
+      nock(process.env.NOFRAUD_API_URL)
+        .post(`/api/v1/transaction-update/cancel-transaction`)
+        .reply(200, cancel())
+        .persist();
     }
   });
 
@@ -85,7 +92,7 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     expect(payload.type).to.equal('Fail');
   });
 
-  it('should send an order to NoFraud  on /order-sync/:orderId PUT', async () => {
+  it('should send an order to NoFraud on /order-sync/:orderId PUT', async () => {
     const message = createRequest(
       global.headers,
       'PUT',
@@ -93,7 +100,7 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     );
     const response = await app(message);
     const payload = JSON.parse(response.body);
-    expect(payload.type).to.equal('Fail');
+    expect(payload.type).to.equal('Pass');
   });
 
   it('should check status at NoFraud  on /order-sync/:orderId/status PUT', async () => {
@@ -104,18 +111,20 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     );
     const response = await app(message);
     const payload = JSON.parse(response.body);
-    expect(payload.type).to.equal('Fail');
+    expect(payload.type).to.equal('Pass');
   });
 
   it('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
     const message = createRequest(
       global.headers,
       'PUT',
-      `/beta/order-sync/${local.orderId}/cancel`
+      `/beta/order-sync/${local.orderId}/cancel`,
+      undefined,
+      { transactionId: '16f235a0-e4a3-529c-9b83-bd15fe722110' }
     );
     const response = await app(message);
     const payload = JSON.parse(response.body);
-    expect(payload.type).to.equal('Fail');
+    expect(payload.type).to.equal('Cancelled');
   });
 
   // it('should update an order sync to NoFraud /order-sync/:orderId PUT', async () => {

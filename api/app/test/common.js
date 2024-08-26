@@ -29,8 +29,7 @@ before(async () => {
   const now = new Date();
   const tenant = {
     id: global.tenantId,
-    noFraudUsername: 'test',
-    noFraudPassword: 'test',
+    noFraudAPIToken: 'test',
     installDate: now.toISOString(),
     isInstalled: true,
     lastSyncDate: now.toISOString()

@@ -1,25 +1,23 @@
 import jsonValidator from '../../helpers/jsonValidator';
 
-export const tenantInstallSchema = () => {
+const tenantInstallSchema = () => {
   const schema = {
     type: 'object',
     properties: {
-      noFraudUsername: { type: 'string' },
-      noFraudPassword: { type: 'string' }
+      noFraudAPIToken: { type: 'string' }
     },
-    required: ['noFraudUsername', 'noFraudPassword'],
+    required: ['noFraudAPIToken'],
     additionalProperties: false
   };
 
   return schema;
 };
 
-export const tenantUpdateSchema = () => {
+const tenantUpdateSchema = () => {
   const schema = {
     type: 'object',
     properties: {
-      noFraudUsername: { type: 'string' },
-      noFraudPassword: { type: 'string' }
+      noFraudAPIToken: { type: 'string' }
     },
     additionalProperties: false
   };

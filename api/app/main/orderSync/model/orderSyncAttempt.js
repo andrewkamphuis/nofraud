@@ -31,6 +31,10 @@ const model = (sequelize, DataTypes) => {
           'Not Required'
         )
       },
+      transactionId: {
+        allowNull: true,
+        type: DataTypes.STRING
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE(6)

@@ -17,26 +17,28 @@ describe('tenant.api.test.js - Tenant beta API', () => {
 
   it('should install, update, uninstall a SINGLE tenant on /tenant', async () => {
     let reqPayload = {
-      noFraudUsername: 'Test',
-      noFraudPassword: 'Test',
+      noFraudAPIToken: 'Test',
       tenantId: 'testing2',
       user: 'test'
     };
-    let message = createRequest(undefined, 'POST', `/beta/tenant`, reqPayload);
+    let message = createRequest(
+      undefined,
+      'POST',
+      `/beta/tenant`,
+      undefined,
+      reqPayload
+    );
     let response = await app(message);
     let payload = JSON.parse(response.body);
-    expect(payload.noFraudUsername).to.equal('Test');
-    expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudAPIToken).to.equal('Test');
 
     message = createRequest({ tenantId: 'testing2' }, 'GET', `/beta/tenant`);
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.noFraudUsername).to.equal('Test');
-    expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudAPIToken).to.equal('Test');
 
     reqPayload = {
-      noFraudUsername: 'Test2',
-      noFraudPassword: 'Test2'
+      noFraudAPIToken: 'Test2'
     };
     message = createRequest(
       { tenantId: 'testing2' },
@@ -47,8 +49,7 @@ describe('tenant.api.test.js - Tenant beta API', () => {
     );
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.noFraudUsername).to.equal('Test2');
-    expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudAPIToken).to.equal('Test2');
 
     reqPayload = {
       tenantId: 'testing2',
@@ -67,8 +68,7 @@ describe('tenant.api.test.js - Tenant beta API', () => {
 
     // INSTALL AGAIN
     reqPayload = {
-      noFraudUsername: 'Test',
-      noFraudPassword: 'Test',
+      noFraudAPIToken: 'Test',
       tenantId: 'testing2',
       user: 'test'
     };
@@ -81,7 +81,6 @@ describe('tenant.api.test.js - Tenant beta API', () => {
     );
     response = await app(message);
     payload = JSON.parse(response.body);
-    expect(payload.noFraudUsername).to.equal('Test');
-    expect(payload.noFraudPassword).to.equal(undefined);
+    expect(payload.noFraudAPIToken).to.equal('Test');
   });
 });
