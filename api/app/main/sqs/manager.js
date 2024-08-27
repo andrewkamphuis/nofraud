@@ -22,4 +22,4 @@ export const processConsumedMessage = async (message) => {
   }
 };
 
-export * as SQSManager from './manager';
+export * as SQSManager from './manager.js';

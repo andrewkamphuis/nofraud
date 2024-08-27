@@ -10,4 +10,4 @@ export const monitor = async (req) => {
   return response;
 };
 
-export * as scheduledTaskController from './controller';
+export * as scheduledTaskController from './controller.js';

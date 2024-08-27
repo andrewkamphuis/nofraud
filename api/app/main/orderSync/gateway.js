@@ -38,4 +38,4 @@ export const includeArray = () => {
   return array;
 };
 
-export * as Gateway from './gateway';
+export * as Gateway from './gateway.js';

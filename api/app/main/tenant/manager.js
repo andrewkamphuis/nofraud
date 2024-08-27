@@ -73,4 +73,4 @@ export const deleteForTestSuite = async (id) => {
   await DAO.deleteObj(id);
 };
 
-export * as TenantManager from './manager';
+export * as TenantManager from './manager.js';
