@@ -2,7 +2,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 import { sendToFifoQueue } from '../../helpers/sqsHelper.js';
-import { TenantManager } from '../tenant/manager';
+import { TenantManager } from '../tenant/manager.js';
 
 import { DAO } from './dao.js';
 import { Gateway } from './gateway.js';
@@ -616,4 +616,4 @@ const update = async (securityObj, params) => {
   return orderSync;
 };
 
-export * as OrderSyncManager from './manager';
+export * as OrderSyncManager from './manager.js';

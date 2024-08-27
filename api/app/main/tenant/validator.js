@@ -1,4 +1,4 @@
-import jsonValidator from '../../helpers/jsonValidator';
+import jsonValidator from '../../helpers/jsonValidator.js';
 
 const tenantInstallSchema = () => {
   const schema = {

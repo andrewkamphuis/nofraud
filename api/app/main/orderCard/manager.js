@@ -1,4 +1,4 @@
-import { OrderSyncManager } from '../orderSync/manager';
+import { OrderSyncManager } from '../orderSync/manager.js';
 
 export const get = async (tenantId, orderId) => {
   const response = {
@@ -42,4 +42,4 @@ export const get = async (tenantId, orderId) => {
   return response;
 };
 
-export * as OrderCardManager from './manager';
+export * as OrderCardManager from './manager.js';
