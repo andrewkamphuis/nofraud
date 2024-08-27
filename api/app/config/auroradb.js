@@ -39,7 +39,7 @@ const config = {
           charset: 'utf8mb4',
           multipleStatements: true
         },
-        logging: false,
+        logging: true,
         host: process.env.DB_WRITER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
@@ -53,7 +53,7 @@ const config = {
           decimalNumbers: true,
           charset: 'utf8mb4'
         },
-        logging: false,
+        logging: true,
         host: process.env.DB_READER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
@@ -213,7 +213,7 @@ const config = {
           charset: 'utf8mb4',
           multipleStatements: false
         },
-        logging: false,
+        logging: console.log,
         host: process.env.DB_WRITER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
@@ -228,7 +228,7 @@ const config = {
           charset: 'utf8mb4',
           multipleStatements: false
         },
-        logging: false,
+        logging: console.log,
         host: process.env.DB_READER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,

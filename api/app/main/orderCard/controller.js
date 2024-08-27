@@ -1,4 +1,4 @@
-import { OrderCardManager } from './manager';
+import { OrderCardManager } from './manager.js';
 
 export const get = async (req) => {
   // incoming variables are tenantId, orderId, and account
@@ -9,4 +9,4 @@ export const get = async (req) => {
   return orderCard;
 };
 
-export * as orderCardController from './controller';
+export * as orderCardController from './controller.js';

@@ -104,4 +104,4 @@ const axiosHeader = (tenant) => {
   return options;
 };
 
-export * as ScheduledTaskManager from './manager';
+export * as ScheduledTaskManager from './manager.js';
