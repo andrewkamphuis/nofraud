@@ -9,7 +9,6 @@ import { tenantController as tenant } from '../main/tenant/controller.js';
 export const urlSwitch = async (message) => {
   const { httpMethod, path } = message;
   let { body } = message;
-
   if (body) {
     body = Buffer.from(body, 'base64').toString('utf8');
     body = JSON.parse(body);
@@ -72,8 +71,9 @@ export const urlSwitch = async (message) => {
   for (const rPath of routeArray) {
     if (pathTest(rPath, path)) {
       if (routes[rPath][httpMethod]) {
+        console.log('----------------message', message);
         const requestObj = {
-          securityObj: message.multiValueQueryStringParameters || {}
+          securityObj: message.queryStringParameters || {}
         };
 
         // Add parameters to request object

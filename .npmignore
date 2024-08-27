@@ -31,4 +31,6 @@ nodemon.json
 .prettier*
 
 # Env files
-.env*
+.env
+.env.production
+.env.development

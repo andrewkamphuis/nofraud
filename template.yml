@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda APP
+Globals:
+  Api:
+    BinaryMediaTypes:
+      - '*~1*'
+Parameters:
+  NodeEnv:
+    Type: String
+    Default: production
+  ApiDomainName:
+    Description: API Domain name to use for this APP.
+    Type: String
+  HostedZoneId:
+    Description: Route53 Domain Hosted ZoneId
+    Type: String
+  C7ApiUrl:
+    Type: String
+  C7AppId:
+    Type: String
+  C7AppSecret:
+    Type: String
+  SendGridApiKey:
+    Type: String
+
+Resources:
+  AppSecrets:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '/${AWS::StackName}/env'
+      Description: 'Secrets used for this APP'
+      SecretString: !Sub '{
+        "c7_api_url" : "${C7ApiUrl}",
+        "c7_app_id" : "${C7AppId}",
+        "c7_app_secret" : "${C7AppSecret}",
+        "sendgrid_api_key" : "${SendGridApiKey}"
+        }'
+  APP:
+    Type: AWS::Serverless::Function
+    DependsOn: AppSecrets
+    Properties:
+      Handler: index.app
+      Runtime: nodejs20.x
+      Timeout: 180
+      MemorySize: 512
+      CodeUri: ./api
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaFunctionSecurityGroup
+        SubnetIds:
+          - !ImportValue 'app-shared-infrastructure:PrivateSubnetOne'
+          - !ImportValue 'app-shared-infrastructure:PrivateSubnetTwo'
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - SQSSendMessagePolicy:
+            QueueName:
+              !GetAtt SqsQueue.QueueName
+        - SQSPollerPolicy:
+            QueueName:
+              !GetAtt SqsQueue.QueueName
+      Layers:
+        - !Ref NodeModulesLayer
+      Events:
+        SQS:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SqsQueue.Arn
+            BatchSize: 1
+        API:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RestApiGateway
+            Path: /beta/{proxy+}
+            Method: any
+      Environment:
+        Variables:
+          NODE_ENV: !Ref NodeEnv
+          DB_WRITER_HOST: !ImportValue 'app-shared-infrastructure:DBWriterHost'
+          DB_READER_HOST: !ImportValue 'app-shared-infrastructure:DBWriterHost'
+          DB_NAME: !Ref 'AWS::StackName'
+          DB_USERNAME: !Sub '{{resolve:secretsmanager:/database:SecretString:db_username}}'
+          DB_PASSWORD: !Sub '{{resolve:secretsmanager:/database:SecretString:db_password}}'
+          SQS_FIFO_URL: !Ref SqsQueue
+          C7_API_URL: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:c7_api_url}}'
+          C7_APP_ID: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:c7_app_id}}'
+          C7_APP_SECRET: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:c7_app_secret}}'
+          SENDGRID_API_KEY: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:sendgrid_api_key}}'
+          SQS_IS_ENABLED: true
+
+  SqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-sqs-queue.fifo'
+      VisibilityTimeout: 900
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - 'DeadLetterQueue'
+            - 'Arn'
+        maxReceiveCount: 3
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${AWS::StackName}-sqs-deadletter-queue.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+
+  NodeModulesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: node-modules
+      Description: Node Modules for Lambda Apps
+      ContentUri: dependencies/
+      CompatibleRuntimes:
+        - nodejs20.x
+      LicenseInfo: 'MIT'
+      RetentionPolicy: Delete
+
+  LambdaFunctionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Access to the Lambda containers
+      VpcId: !ImportValue 'app-shared-infrastructure:VPCId'
+  RdsSecurityGroupIngressFromLambda:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from lambda function
+      GroupId: !ImportValue 'app-shared-infrastructure:RdsSecurityGroup'
+      IpProtocol: tcp
+      FromPort: 3306
+      ToPort: 3306
+      SourceSecurityGroupId: !Ref 'LambdaFunctionSecurityGroup'
+
+  RestApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Domain:
+        DomainName: !Ref ApiDomainName
+        EndpointConfiguration: REGIONAL
+        CertificateArn: !ImportValue 'app-shared-infrastructure:CertificateDomainName'
+        SecurityPolicy: TLS_1_2
+        Route53:
+          HostedZoneId: !Ref HostedZoneId
+
+  # We could add this to handle API authorization, or just bake it into the index.js to handle the auth.
+  # Auth:
+  #  DefaultAuthorizer: MyLambdaTokenAuthorizer
+  #  Authorizers:
+  #    MyLambdaTokenAuthorizer:
+  #      FunctionArn: !GetAtt ApiAuthFunction.Arn
+
+  # ApiAuthFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: ./auth
+  #     Handler: authorizer.handler
+  #     Runtime: nodejs20.x

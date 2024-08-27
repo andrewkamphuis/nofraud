@@ -57,4 +57,4 @@ export const deleteObj = async (id) => {
   });
 };
 
-export * as DAO from './dao';
+export * as DAO from './dao.js';

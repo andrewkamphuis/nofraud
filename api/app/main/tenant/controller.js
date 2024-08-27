@@ -46,4 +46,4 @@ const validate = (resultsArray) => {
   }
 };
 
-export * as tenantController from './controller';
+export * as tenantController from './controller.js';

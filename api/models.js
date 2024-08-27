@@ -6,7 +6,7 @@ import config from './app/config/auroradb.js';
 import orderSync from './app/main/orderSync/model/orderSync.js';
 import orderSyncAttempt from './app/main/orderSync/model/orderSyncAttempt.js';
 import orderSyncAttemptError from './app/main/orderSync/model/orderSyncAttemptError.js';
-import tenant from './app/main/tenant/model/tenant';
+import tenant from './app/main/tenant/model/tenant.js';
 
 const { writerDatabase, readerDatabase, globalDatabase, analyticDatabase } =
   config[process.env.NODE_ENV].databases;
@@ -18,6 +18,12 @@ export const sequelize = new Sequelize(
   writerDatabase
 );
 sequelizeTransforms(sequelize);
+console.log(
+  '----------------writerDatabase',
+  writerDatabase,
+  sequelize,
+  process.env
+);
 
 export const sequelizeReader = new Sequelize(
   readerDatabase.database,

@@ -1,4 +1,0 @@
-{
-  "ignore": ["public/*"],
-  "watch": ["db/*", "app/*", "test/*", "app.js"]
-}

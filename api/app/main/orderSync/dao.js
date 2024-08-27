@@ -88,4 +88,4 @@ const includeCreateArray = () => {
   return array;
 };
 
-export * as DAO from './dao';
+export * as DAO from './dao.js';
