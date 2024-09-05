@@ -139,3 +139,5 @@ production-parameters.json
 
 # sam local
 .aws-sam/build/
+samconfig.toml
+
