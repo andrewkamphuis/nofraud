@@ -23,6 +23,8 @@ Parameters:
     Type: String
   SendGridApiKey:
     Type: String
+  NoFraudApiUrl:
+    Type: String
 
 Resources:
   AppSecrets:
@@ -34,7 +36,8 @@ Resources:
         "c7_api_url" : "${C7ApiUrl}",
         "c7_app_id" : "${C7AppId}",
         "c7_app_secret" : "${C7AppSecret}",
-        "sendgrid_api_key" : "${SendGridApiKey}"
+        "sendgrid_api_key" : "${SendGridApiKey}",
+        "nofraud_api_url" : "${NoFraudApiUrl}"
         }'
   APP:
     Type: AWS::Serverless::Function
@@ -86,6 +89,7 @@ Resources:
           C7_APP_ID: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:c7_app_id}}'
           C7_APP_SECRET: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:c7_app_secret}}'
           SENDGRID_API_KEY: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:sendgrid_api_key}}'
+          NOFRAUD_API_URL: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:nofraud_api_url}}'
           SQS_IS_ENABLED: true
 
   SqsQueue:

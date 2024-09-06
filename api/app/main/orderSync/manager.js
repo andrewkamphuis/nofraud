@@ -94,8 +94,9 @@ const getCommerce7Order = async (tenantId, id) => {
 };
 
 const getCommerce7Settings = async (tenantId) => {
-  const url = `${process.env.C7_API_URL}/v2/setting/for-web`;
-  const response = await axios.get(url, axiosHeader(tenantId));
+  const url = `${process.env.C7_API_URL}/v1/setting/for-web?version=V2`;
+  const response = await axios.get(url, axiosHeaderNoAuth(tenantId));
+  console.log('------------settings', response);
   const settings = response.data;
   return settings;
 };
@@ -144,10 +145,10 @@ const attemptSyncWithNoFraud = async (securityObj, c7order) => {
   let response;
   try {
     const axiosResponse = await axios.post(url, payload);
-    // console.log('-------------------response', axiosResponse);
+    console.log('-------------------NoFraudresponse', axiosResponse);
     response = processNoFraudResponse(axiosResponse);
   } catch (err) {
-    // console.log('-------------------error', err);
+    console.log('-------------------NoFrauderror', err);
     response = processNoFraudErrorResponse(err.response);
   }
 
@@ -325,7 +326,7 @@ const noFraudPayload = async (securityObj, settings, c7order) => {
   const payload = {
     nfToken: settings.noFraudAPIToken,
     amount: decimalFormat(c7order.total),
-    gatewayName: c7Settings.payment.gateway,
+    gatewayName: getGateway(c7Settings),
     gatewayStatus: 'pass',
     cardAttempts: creditCardAttemptCount(c7order),
     customerIP: c7order.connectionInformation.customerIpAddress,
@@ -544,6 +545,15 @@ const axiosHeader = (tenant) => {
   return options;
 };
 
+const axiosHeaderNoAuth = (tenant) => {
+  const options = {
+    headers: {
+      tenant
+    }
+  };
+  return options;
+};
+
 export const deleteAll = async (securityObj) => {
   await Gateway.deleteAll(securityObj);
 };
@@ -617,3 +627,16 @@ const update = async (securityObj, params) => {
 };
 
 export * as OrderSyncManager from './manager.js';
+
+const getGateway = (settings) => {
+  if (settings.commerce7Payments?.enabled) {
+    return 'Commerce7Payments';
+  }
+  if (settings.paystack?.apiKey) {
+    return 'Paystack';
+  }
+  if (settings.stripe?.accountId) {
+    return 'Stripe';
+  }
+  return settings.payment.gateway;
+};
