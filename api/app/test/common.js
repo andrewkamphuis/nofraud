@@ -12,8 +12,9 @@ global.createRequest = (headers, method, path, queryParams, payload) => {
     resource: path,
     path,
     httpMethod: method,
+    headers,
     queryStringParameters: queryParams,
-    multiValueQueryStringParameters: headers,
+    multiValueQueryStringParameters: queryParams,
     pathParameters: null,
     stageVariables: null,
     isBase64Encoded: true

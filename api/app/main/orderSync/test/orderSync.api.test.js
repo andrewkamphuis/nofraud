@@ -22,7 +22,7 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
         .reply(200, c7Order())
         .persist();
       nock(process.env.C7_API_URL)
-        .get(`/v2/setting/for-web`)
+        .get(`/v1/setting/for-web?version=V2`)
         .reply(200, settings())
         .persist();
       nock(process.env.NOFRAUD_API_URL)
