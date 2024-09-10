@@ -61,7 +61,7 @@ const OrderView = ({ setError }) => {
       )}
       <Region>
         <StyledActionContainer>
-          <Heading marginBottom="0px">No Fraud</Heading>
+          <Heading marginBottom="0px">NoFraud</Heading>
           <Actions
             setError={setError}
             order={order}

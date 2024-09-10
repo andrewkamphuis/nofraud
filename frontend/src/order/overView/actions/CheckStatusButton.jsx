@@ -34,7 +34,7 @@ const CheckStatusButton = ({
   return (
     <Button
       size="small"
-      startIcon="closeCircle"
+      startIcon="sync"
       variant="secondary"
       onClick={handleCheckStatus}
       loading={isLoading}
