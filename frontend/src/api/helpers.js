@@ -1,4 +1,4 @@
-import queryString from "query-string";
+import queryString from 'query-string';
 
 export const tenantFromURL = () => {
   const parsed = queryString.parse(window.location.search);
@@ -14,8 +14,8 @@ export const axiosHeader = () => {
   return {
     headers: {
       tenant: tenantFromURL(),
-      tenantId: tenantFromURL(),
-    },
+      tenantId: tenantFromURL()
+    }
   };
 };
 
@@ -24,7 +24,7 @@ export const getRootUrl = () => {
   // return "http://0.0.0.0:4000";
 
   // ngrok
-  return "https://noFraud-app.tinygrape.co";
+  return 'https://noFraud-api.tinygrape.co';
 
   // throw new Error("Your ENV is incorrect");
 };
