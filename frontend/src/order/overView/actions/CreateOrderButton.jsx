@@ -40,7 +40,7 @@ const CreateOrderButton = ({
       loading={isLoading}
       disabled={isDisabled}
     >
-      Create Order
+      Sync Order
     </Button>
   );
 };

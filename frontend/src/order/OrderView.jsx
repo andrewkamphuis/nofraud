@@ -11,7 +11,7 @@ import { ButtonMenu as UIButtonMenu } from '@commerce7/admin-ui';
 const { ButtonMenuItem } = UIButtonMenu;
 
 const OrderView = ({ setError }) => {
-  const [order, setOrder] = useState({ type: 'Fail' });
+  const [order, setOrder] = useState();
 
   useEffect(() => {
     const get = async () => {
