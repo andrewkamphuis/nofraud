@@ -103,7 +103,6 @@ const getCommerce7Order = async (tenantId, id) => {
 const getCommerce7Settings = async (tenantId) => {
   const url = `${process.env.C7_API_URL}/v1/setting/for-web?version=V2`;
   const response = await axios.get(url, axiosHeaderNoAuth(tenantId));
-  console.log('------------settings', response);
   const settings = response.data;
   return settings;
 };
@@ -152,10 +151,8 @@ const attemptSyncWithNoFraud = async (securityObj, c7order) => {
   let response;
   try {
     const axiosResponse = await axios.post(url, payload);
-    console.log('-------------------NoFraudresponse', axiosResponse);
     response = processNoFraudResponse(axiosResponse);
   } catch (err) {
-    console.log('-------------------NoFrauderror', err);
     response = processNoFraudErrorResponse(err.response);
   }
 
@@ -196,7 +193,7 @@ const cancelWithNoFraud = async (securityObj, transactionId) => {
       type: 'Cancelled'
     };
   } catch (err) {
-    console.log('-------------------error', err);
+    // console.log('-------------------error', err);
     response = processNoFraudErrorResponse(err.response);
   }
 
