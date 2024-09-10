@@ -23,8 +23,8 @@
     "sequelize:dev:migrate:undo": "npm run set:development:env && NODE_ENV=development sequelize --env development db:migrate:undo",
     "sequelize:prod:migrate": "npm run set:production:env && NODE_ENV=production sequelize --env production db:migrate",
     "sequelize:prod:migrate:undo": "npm run set:production:env && NODE_ENV=production sequelize --env production db:migrate:undo",
-    "set:development:env": "rm .env && cp .env.development .env",
-    "set:production:env": "rm .env && cp .env.production .env",
+    "set:development:env": "rm ../.env && cp ../.env.development ../.env",
+    "set:production:env": "rm ../.env && cp ../.env.production ../.env",
     "tail:logs": "build/production/scripts/tail-logs.sh",
     "pre-commit": "lint-staged",
     "eslint": "eslint --fix --debug --ext .js app"
