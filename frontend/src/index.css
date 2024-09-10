@@ -1,0 +1,437 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* App Styles
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+}
+
+body {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.9375rem;
+  font-family: "Nunito", sans-serif;
+}
+
+p {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+li {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Nunito", sans-serif;
+  font-weight: 300;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  font-size: 1.3125rem;
+  line-height: 1.1;
+}
+
+h1 span {
+  display: block;
+  font-size: 0.5em;
+  font-style: italic;
+}
+
+h2 {
+  font-size: 1.125rem;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+h3 {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+}
+
+th {
+  font-size: 0.75rem;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  vertical-align: top;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #ccc;
+  height: 1px;
+  margin: 1rem auto;
+}
+
+strong {
+  font-weight: 600;
+}
+
+form {
+  margin: 0 auto 1rem;
+  text-align: left;
+}
+
+form div {
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 0.75rem;
+  color: #999999;
+}
+
+input {
+  background-color: #fff;
+  border: 1px solid #999999;
+  border-radius: 0;
+  outline: none;
+  height: 3rem;
+  width: 100%;
+  font-size: 1rem;
+  margin: 0 0 15px 0;
+  padding: 0 10px;
+  box-shadow: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  color: #000;
+  line-height: normal;
+}
+
+select {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #111111;
+  font-size: 1rem;
+  padding: 0 0 0 10px;
+  border: 1px solid #999999;
+  border-radius: 0px;
+  box-sizing: border-box;
+  height: 3rem;
+  width: 100%;
+  text-transform: none;
+  margin: 0 0 15px 0;
+}
+
+button,
+.button {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+  -o-transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+  background: #00679d;
+  color: #fff;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 400;
+  width: auto;
+  padding: 7px 12px;
+  text-align: center;
+  -webkit-letter-spacing: 0.5px;
+  -moz-letter-spacing: 0.5px;
+  -ms-letter-spacing: 0.5px;
+  letter-spacing: 0.5px;
+  border: 2px solid #00679d;
+  border-radius: 0;
+  cursor: pointer;
+  margin: 0;
+  line-height: normal;
+}
+
+button:hover,
+.button:hover {
+  background: white;
+  color: #00679d;
+  outline: 0;
+}
+
+button.alt,
+.button-alt {
+  background: #fff;
+  display: inline-block;
+  color: #0192d0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 400;
+  width: auto;
+  padding: 7px 12px;
+  text-align: center;
+  -webkit-letter-spacing: 0.5px;
+  -moz-letter-spacing: 0.5px;
+  -ms-letter-spacing: 0.5px;
+  letter-spacing: 0.5px;
+  border: 2px solid #0192d0;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: normal;
+}
+
+button.alt:hover,
+.button-alt:hover {
+  background: #0192d0;
+  color: white;
+  outline: 0;
+}
+
+.shadow {
+  -webkit-filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+  /* Similar syntax to box-shadow */
+}
+
+/* Layout */
+
+.content-wrapper {
+  padding: 1rem;
+}
+
+.content-wrapper--center {
+  text-align: center;
+}
+
+.section {
+  padding: 1.75rem 25px 1rem;
+  opacity: 1;
+  transform: none;
+  border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+.section__actions {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section__actions h1 {
+  margin: 0;
+}
+
+.section__actions img,
+section__actions svg {
+  width: 48px;
+  vertical-align: middle;
+}
+
+.section__actions a {
+  color: #00679d;
+  transition: all 200ms ease-in-out 0s;
+  text-decoration: none;
+  text-align: right;
+}
+
+.section__actions a:hover {
+  color: rgb(0, 0, 0);
+}
+
+.section__actions a svg {
+  fill: #00679d;
+  transition: all 0.2s ease-in-out 0s;
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  margin-right: 7px;
+  vertical-align: middle;
+  transform: translateY(-2px);
+  overflow: hidden;
+}
+
+.section__actions a:hover svg {
+  fill: rgb(0, 0, 0);
+}
+
+/* Reports */
+
+.graph-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+
+.table-wrapper table {
+  font-size: 0.9375rem;
+}
+
+.table-wrapper th {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.75rem;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  vertical-align: top;
+  background: rgb(255, 255, 255);
+  padding: 15px;
+}
+
+.table-wrapper tr {
+  border-bottom: 1px solid rgb(238, 238, 238);
+}
+
+.table-wrapper tbody tr:nth-child(2n + 1) {
+  background-color: rgb(245, 245, 245);
+}
+
+.table-wrapper td {
+  padding: 15px;
+}
+
+.table-wrapper tfoot td {
+  color: rgb(255, 255, 255);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  background: rgba(38, 50, 56, 0.75);
+}

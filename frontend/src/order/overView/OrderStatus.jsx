@@ -1,5 +1,5 @@
-import OrderAttempts from './orderStatus/OrderAttempts';
-import { Alert, Text } from '@commerce7/admin-ui';
+import { Text } from "@commerce7/admin-ui";
+import OrderAttempts from "./orderStatus/OrderAttempts";
 
 const OrderStatus = ({ order }) => {
   if (!order) {
@@ -8,9 +8,7 @@ const OrderStatus = ({ order }) => {
 
   return (
     <>
-      <Alert variant={getAlertVariant(order.type)}>
-        <Text strong>{order.type}</Text> - {getSyncText(order.type)}
-      </Alert>
+      <Text block>{getSyncText(order.type)}</Text>
       <OrderAttempts order={order}></OrderAttempts>
     </>
   );
@@ -19,37 +17,34 @@ const OrderStatus = ({ order }) => {
 export default OrderStatus;
 
 const getSyncText = (type) => {
-  let syncText = '';
+  let syncText = "";
   switch (type) {
-    case 'Pass':
-      syncText = `This order has passed NoFraud's fraud detection and has been deemed a legitimate order.`;
-      break;
-    case 'Needs Review':
+    case "Not Required To Send":
       syncText =
-        'This order needs review as NoFraud can not guarantee its legitimacy';
+        "Order has not been sent to NoFraud, because the order is being carried-out/shipped/picked-up in a state which is not selected in your NoFraud settings.";
       break;
-    case 'Fail':
+    case "Not sent": //TODO review enums with andrew
       syncText =
-        'This order has failed NoFraud fraud detection  and has been deemed a illegitimate order.';
+        "Order has not been sent to NoFraud yet.  Click Retry Sync to send.";
       break;
-    case 'Cancelled':
-      syncText = 'This order has been cancelled.';
+    case "Sent but errored": //TODO review enums with andrew
+    case "Failed To Send":
+      syncText =
+        "Order has failed being sent to NoFraud. Please Retry Syncing.";
       break;
-    case 'Not Required':
-      syncText = 'This order does not require NoFraud verification.';
+    case "Dont Send": //TODO review enums with andrew
+      syncText =
+        "Order has failed being sent to NoFraud and has been set to Dont Send status.";
+      break;
+    case "Success": //TODO review enums with andrew
+    case "Sent To NoFraud":
+      syncText = "Order has been successfully sent to NoFraud.";
+      break;
+    case "Voided In NoFraud":
+      syncText = "Order has been voided in NoFraud.";
       break;
     default:
       break;
   }
   return syncText;
-};
-
-const getAlertVariant = (type) => {
-  if (type === 'Fail') {
-    return 'error';
-  }
-  if (type === 'Pass') {
-    return 'success';
-  }
-  if (type === 'Needs Review') return 'warning';
 };

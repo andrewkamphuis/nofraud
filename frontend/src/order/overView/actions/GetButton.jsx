@@ -1,13 +1,13 @@
-import React from 'react';
-import { Button } from '@commerce7/admin-ui';
-import { getOrder } from '../../../api/Order';
-import { orderIdFromUrl } from '../../../api/helpers';
+import React from "react";
+import { Button } from "@commerce7/admin-ui";
+import { getOrder } from "../../../api/Order";
+import { orderIdFromUrl } from "../../../api/helpers";
 
 const GetButton = ({
   successFunction,
   errorFunction,
   isLoading,
-  setIsLoading
+  setIsLoading,
 }) => {
   const handleRetryGet = async () => {
     setIsLoading(true);

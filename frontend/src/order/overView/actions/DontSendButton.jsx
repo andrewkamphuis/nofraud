@@ -1,40 +1,21 @@
-import React from 'react';
-import { Button } from '@commerce7/admin-ui';
-import { putNotRequired } from '../../../api/Order';
-import { orderIdFromUrl } from '../../../api/helpers';
-import { useState } from 'react';
+import React from "react";
+import { Button } from "@commerce7/admin-ui";
+import { putNotRequired } from "../../../api/Order";
+import { orderIdFromUrl } from "../../../api/helpers";
 
-const DontSendButton = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const errorFunction = (error) => {
-    setIsLoading(false);
-    setIsDisabled(false);
-    setError(error);
-  };
-
-  const successFunction = (data) => {
-    setError(null);
-    setIsLoading(false);
-    setIsDisabled(false);
-    setOrder(data);
-  };
-
+const DontSendButton = ({
+  successFunction,
+  errorFunction,
+  isLoading,
+  setIsLoading,
+}) => {
   const handleDontSend = async () => {
-    setIsDisabled(true);
     setIsLoading(true);
     await putNotRequired(orderIdFromUrl(), successFunction, errorFunction);
   };
 
   return (
-    <Button
-      size="small"
-      startIcon="closeCircle"
-      onClick={handleDontSend}
-      loading={isLoading}
-      variant="secondary"
-      disabled={isDisabled}
-    >
+    <Button size="small" onClick={handleDontSend} loading={isLoading}>
       Don't Send
     </Button>
   );

@@ -1,75 +1,101 @@
-import { useState } from 'react';
-import VoidButton from './actions/VoidButton';
-import RetryButton from './actions/RetryButton';
-import DontSendButton from './actions/DontSendButton';
+import { useState } from "react";
+import DontSendButton from "./actions/DontSendButton";
+import RetryButton from "./actions/RetryButton";
+import VoidButton from "./actions/VoidButton";
 
 export const Actions = ({ order, setOrder, setError }) => {
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const errorFunction = (error) => {
+    setIsLoading(false);
+    setError(error);
+  };
+
+  const successFunction = (data) => {
+    setError(null);
+    setIsLoading(false);
+    setOrder(data);
+  };
 
   if (!order) {
     return (
       <RetryButton
-        setOrder={setOrder}
-        setError={setError}
-        isDisabled={isDisabled}
-        setIsDisabled={setIsDisabled}
+        successFunction={successFunction}
+        errorFunction={errorFunction}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
       />
     );
   }
 
   const { type } = order;
 
-  if (type === 'Not Required To Send') {
+  //TODO review enums with andrew
+  if (type === "Not Required To Send") {
     return (
       <RetryButton
-        setOrder={setOrder}
-        setError={setError}
-        isDisabled={isDisabled}
-        setIsDisabled={setIsDisabled}
+        successFunction={successFunction}
+        errorFunction={errorFunction}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
       />
     );
   }
 
-  if (['Sent To Vinoshipper'].includes(type)) {
+  if (["Success", "Sent To NoFraud"].includes(type)) {
     return (
       <div>
-        {/* <RetryButton
-          setOrder={setOrder}
-          setError={setError}
-          isDisabled={isDisabled}
-          setIsDisabled={setIsDisabled}
-        /> */}
-        <VoidButton
-          setOrder={setOrder}
-          setError={setError}
-          isDisabled={isDisabled}
-          setIsDisabled={setIsDisabled}
-        />
-      </div>
-    );
-  }
-
-  if (['Failed To Send'].includes(type)) {
-    return (
-      <div>
+        <VoidButton setIsLoading={setIsLoading} setOrder={setOrder} />
         <RetryButton
-          setOrder={setOrder}
-          setError={setError}
-          isDisabled={isDisabled}
-          setIsDisabled={setIsDisabled}
-        />
-        <DontSendButton
-          setOrder={setOrder}
-          setError={setError}
-          isDisabled={isDisabled}
-          setIsDisabled={setIsDisabled}
+          successFunction={successFunction}
+          errorFunction={errorFunction}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       </div>
     );
   }
 
-  if (['Voided In Vinoshipper'].includes(type)) {
-    return null;
+  if (type === "Sent but errored") {
+    return (
+      <div>
+        <DontSendButton
+          successFunction={successFunction}
+          errorFunction={errorFunction}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+        <RetryButton
+          successFunction={successFunction}
+          errorFunction={errorFunction}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+      </div>
+    );
+  }
+
+  // TODO not checked is not an agreed upon enum
+  if (
+    ["Not sent", "Dont Send", "Voided In NoFraud"].includes(type) ||
+    ["Failed To Send"].includes(type)
+  ) {
+    return (
+      <div>
+        {/* <GetButton
+          successFunction={successFunction}
+          errorFunction={errorFunction}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        /> */}
+        <RetryButton
+          successFunction={successFunction}
+          errorFunction={errorFunction}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+      </div>
+    );
   }
 
   return null;
