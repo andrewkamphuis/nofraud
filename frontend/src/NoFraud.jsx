@@ -21,7 +21,10 @@ const NoFraud = () => {
         <AppErrorBoundary error={error}></AppErrorBoundary>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<OrderView setError={setError} />} />
+            <Route
+              path="/orderView"
+              element={<OrderView setError={setError} />}
+            />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

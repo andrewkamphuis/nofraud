@@ -2,6 +2,7 @@ import OrderAttempts from './orderStatus/OrderAttempts';
 import { Alert, Text } from '@commerce7/admin-ui';
 
 const OrderStatus = ({ order }) => {
+  return <h1>test</h1>;
   if (!order) {
     return <Text>Order not found in NoFraud. Please retry syncing.</Text>;
   }
