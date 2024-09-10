@@ -1,7 +1,6 @@
 import CustomError from '../../helpers/error.js';
 
 import { OrderSyncManager } from './manager.js';
-import { validateCancel } from './validator.js';
 
 export const get = async (req) => {
   const orderSync = await OrderSyncManager.get(
@@ -29,12 +28,9 @@ export const checkStatus = async (req) => {
 
 export const cancelAtNoFraud = async (req) => {
   const params = req.body;
-  validate(validateCancel(params));
-
   const orderSync = await OrderSyncManager.cancelAtNoFraud(
     req.securityObj,
-    req.params.orderId,
-    params
+    req.params.orderId
   );
   return orderSync;
 };

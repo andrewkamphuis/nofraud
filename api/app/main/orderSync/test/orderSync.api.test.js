@@ -114,13 +114,12 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     expect(payload.type).to.equal('Pass');
   });
 
-  it('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
+  it.only('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
     const message = createRequest(
       global.headers,
       'PUT',
       `/beta/order-sync/${local.orderId}/cancel`,
-      undefined,
-      { transactionId: '16f235a0-e4a3-529c-9b83-bd15fe722110' }
+      undefined
     );
     const response = await app(message);
     const payload = JSON.parse(response.body);

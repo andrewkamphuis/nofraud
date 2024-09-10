@@ -54,12 +54,19 @@ export const checkStatus = async (securityObj, id) => {
 };
 
 export const cancelAtNoFraud = async (securityObj, id, params) => {
+  let orderSync = await DAO.get(securityObj, id);
+
+  const attemptWithTransactionId = orderSync.attempts.find(
+    (attempt) => attempt.transactionId !== null
+  );
+
+  const { transactionId } = attemptWithTransactionId;
+
   // Attempt to sync order
-  const attempt = await cancelWithNoFraud(securityObj, params);
+  const attempt = await cancelWithNoFraud(securityObj, transactionId);
   // Is order in our database
 
   try {
-    let orderSync = await DAO.get(securityObj, id);
     orderSync = updateFromSync(securityObj, id, attempt);
     return orderSync;
   } catch (err) {
@@ -170,14 +177,14 @@ const checkStatusWithNoFraud = async (securityObj, settings, c7order) => {
   return response;
 };
 
-const cancelWithNoFraud = async (securityObj, params) => {
+const cancelWithNoFraud = async (securityObj, transactionId) => {
   const now = new Date();
 
   const settings = await TenantManager.get(securityObj);
 
   const payload = {
     nf_token: settings.noFraudAPIToken,
-    transaction_id: params.transactionId
+    transaction_id: transactionId
   };
 
   const url = `${process.env.NOFRAUD_API_URL}/api/v1/transaction-update/cancel-transaction`;
