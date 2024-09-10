@@ -17,6 +17,7 @@ export const getOrder = async (orderId, successFunction, errorFunction) => {
     }
   } catch (error) {
     if (errorFunction) {
+      console.log('error');
       errorFunction(error.response?.data);
       return;
     }
@@ -24,8 +25,8 @@ export const getOrder = async (orderId, successFunction, errorFunction) => {
   }
 };
 
-// retry
-export const putSync = async (orderId, successFunction, errorFunction) => {
+// create order at noFraud
+export const createOrder = async (orderId, successFunction, errorFunction) => {
   try {
     const response = await axios.put(
       `${getRootUrl()}/beta/order-sync/${orderId}`,
@@ -48,11 +49,11 @@ export const putSync = async (orderId, successFunction, errorFunction) => {
   }
 };
 
-// void an existing order
-export const putVoid = async (orderId, successFunction, errorFunction) => {
+// create status at noFraud
+export const checkStatus = async (orderId, successFunction, errorFunction) => {
   try {
     const response = await axios.put(
-      `${getRootUrl()}/beta/order-sync/${orderId}/void`,
+      `${getRootUrl()}/beta/order-sync/${orderId}/status`,
       {},
       axiosHeader()
     );
@@ -72,15 +73,11 @@ export const putVoid = async (orderId, successFunction, errorFunction) => {
   }
 };
 
-// remove requirement
-export const putNotRequired = async (
-  orderId,
-  successFunction,
-  errorFunction
-) => {
+// cancel order at noFraud
+export const cancelOrder = async (orderId, successFunction, errorFunction) => {
   try {
     const response = await axios.put(
-      `${getRootUrl()}/beta/order-sync/${orderId}/not-required`,
+      `${getRootUrl()}/beta/order-sync/${orderId}/cancel`,
       {},
       axiosHeader()
     );

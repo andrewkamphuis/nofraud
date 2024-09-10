@@ -1,10 +1,15 @@
 import React from 'react';
 import { Button } from '@commerce7/admin-ui';
-import { putVoid } from '../../../api/Order';
+import { checkStatus } from '../../../api/Order';
 import { orderIdFromUrl } from '../../../api/helpers';
 import { useState } from 'react';
 
-const Void = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
+const CheckStatusButton = ({
+  setOrder,
+  setError,
+  isDisabled,
+  setIsDisabled
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const errorFunction = (error) => {
@@ -20,24 +25,24 @@ const Void = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
     setOrder(data);
   };
 
-  const handleVoidSync = async () => {
+  const handleCheckStatus = async () => {
     setIsDisabled(true);
     setIsLoading(true);
-    await putVoid(orderIdFromUrl(), successFunction, errorFunction);
+    await checkStatus(orderIdFromUrl(), successFunction, errorFunction);
   };
 
   return (
     <Button
-      startIcon="closeCircle"
       size="small"
+      startIcon="closeCircle"
       variant="secondary"
-      onClick={handleVoidSync}
+      onClick={handleCheckStatus}
       loading={isLoading}
       disabled={isDisabled}
     >
-      Void Sync
+      Check Order Status
     </Button>
   );
 };
 
-export default Void;
+export default CheckStatusButton;

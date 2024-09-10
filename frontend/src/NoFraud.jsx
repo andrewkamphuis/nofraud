@@ -2,7 +2,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import { Commerce7AdminUI } from '@commerce7/admin-ui';
 import { ThemeProvider } from 'styled-components';
-// import SettingsView from './settings/SettingsView';
 import OrderView from './order/OrderView';
 import queryString from 'query-string';
 import React, { useState } from 'react';

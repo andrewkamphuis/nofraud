@@ -1,10 +1,15 @@
 import React from 'react';
 import { Button } from '@commerce7/admin-ui';
-import { putNotRequired } from '../../../api/Order';
+import { createOrder } from '../../../api/Order';
 import { orderIdFromUrl } from '../../../api/helpers';
 import { useState } from 'react';
 
-const DontSendButton = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
+const CreateOrderButton = ({
+  setOrder,
+  setError,
+  isDisabled,
+  setIsDisabled
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const errorFunction = (error) => {
@@ -20,24 +25,24 @@ const DontSendButton = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
     setOrder(data);
   };
 
-  const handleDontSend = async () => {
+  const handleCreate = async () => {
     setIsDisabled(true);
     setIsLoading(true);
-    await putNotRequired(orderIdFromUrl(), successFunction, errorFunction);
+    await createOrder(orderIdFromUrl(), successFunction, errorFunction);
   };
 
   return (
     <Button
       size="small"
       startIcon="closeCircle"
-      onClick={handleDontSend}
-      loading={isLoading}
       variant="secondary"
+      onClick={handleCreate}
+      loading={isLoading}
       disabled={isDisabled}
     >
-      Don't Send
+      Create Order
     </Button>
   );
 };
 
-export default DontSendButton;
+export default CreateOrderButton;

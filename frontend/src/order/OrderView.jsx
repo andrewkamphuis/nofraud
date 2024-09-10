@@ -11,15 +11,19 @@ import { ButtonMenu as UIButtonMenu } from '@commerce7/admin-ui';
 const { ButtonMenuItem } = UIButtonMenu;
 
 const OrderView = ({ setError }) => {
-  const [order, setOrder] = useState(null);
+  const [order, setOrder] = useState({ type: 'Fail' });
 
   useEffect(() => {
     const get = async () => {
-      const result = await getOrder(orderIdFromUrl()).catch((error) => {});
+      const result = await getOrder(orderIdFromUrl(), null, errorFunction);
       setOrder(result);
     };
     get();
   }, []);
+
+  const errorFunction = (error) => {
+    setError(error);
+  };
 
   const setType = (type) => {
     const newOrder = { ...order };
@@ -37,17 +41,20 @@ const OrderView = ({ setError }) => {
       ].includes(tenantFromURL()) && (
         <Region>
           <UIButtonMenu>
-            <ButtonMenuItem onClick={() => setType('Sent To Vinoshipper')}>
-              Sent To Vinoshipper
+            <ButtonMenuItem onClick={() => setType('Pass')}>
+              Pass
             </ButtonMenuItem>
-            <ButtonMenuItem onClick={() => setType('Not Required To Send')}>
-              Not Required To Send
+            <ButtonMenuItem onClick={() => setType('Needs Review')}>
+              Needs Review
             </ButtonMenuItem>
-            <ButtonMenuItem onClick={() => setType('Failed To Send')}>
-              Failed To Send
+            <ButtonMenuItem onClick={() => setType('Fail')}>
+              Fail
             </ButtonMenuItem>
-            <ButtonMenuItem onClick={() => setType('Voided In Vinoshipper')}>
-              Voided In Vinoshipper
+            <ButtonMenuItem onClick={() => setType('Cancelled')}>
+              Cancelled
+            </ButtonMenuItem>
+            <ButtonMenuItem onClick={() => setType('Not Required')}>
+              Not Required
             </ButtonMenuItem>
           </UIButtonMenu>
         </Region>
