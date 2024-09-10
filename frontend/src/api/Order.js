@@ -1,5 +1,5 @@
-import axios from "axios";
-import { axiosHeader, getRootUrl } from "./helpers";
+import axios from 'axios';
+import { axiosHeader, getRootUrl } from './helpers';
 
 // get the order
 export const getOrder = async (orderId, successFunction, errorFunction) => {
@@ -17,10 +17,10 @@ export const getOrder = async (orderId, successFunction, errorFunction) => {
     }
   } catch (error) {
     if (errorFunction) {
-      errorFunction(error.response.data);
+      errorFunction(error.response?.data);
       return;
     }
-    throw new Error("Something went wrong");
+    throw new Error('Something went wrong');
   }
 };
 
@@ -41,10 +41,10 @@ export const putSync = async (orderId, successFunction, errorFunction) => {
     }
   } catch (error) {
     if (errorFunction) {
-      errorFunction(error.response.data);
+      errorFunction(error.response?.data);
       return;
     }
-    throw new Error("Something went wrong");
+    throw new Error('Something went wrong');
   }
 };
 
@@ -65,10 +65,10 @@ export const putVoid = async (orderId, successFunction, errorFunction) => {
     }
   } catch (error) {
     if (errorFunction) {
-      errorFunction(error.response.data);
+      errorFunction(error.response?.data);
       return;
     }
-    throw new Error("Something went wrong");
+    throw new Error('Something went wrong');
   }
 };
 
@@ -93,9 +93,9 @@ export const putNotRequired = async (
     }
   } catch (error) {
     if (errorFunction) {
-      errorFunction(error.response.data);
+      errorFunction(error.response?.data);
       return;
     }
-    throw new Error("Something went wrong");
+    throw new Error('Something went wrong');
   }
 };
