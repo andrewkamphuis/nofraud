@@ -8,6 +8,17 @@ import { tenantController as tenant } from '../main/tenant/controller.js';
 // eslint-disable-next-line import/prefer-default-export
 export const urlSwitch = async (message) => {
   const { httpMethod, path } = message;
+  if (httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        Allow: 'GET,POST,OPTIONS',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type,tenant,tenantId'
+      }
+    };
+  }
   let { body } = message;
   if (body) {
     body = Buffer.from(body, 'base64').toString('utf8');
@@ -58,6 +69,7 @@ export const urlSwitch = async (message) => {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,OPTIONS',
         'Content-type': 'application/json'
       },
       body: JSON.stringify(results),
@@ -71,10 +83,23 @@ export const urlSwitch = async (message) => {
   for (const rPath of routeArray) {
     if (pathTest(rPath, path)) {
       if (routes[rPath][httpMethod]) {
-        console.log('----------------message', message);
         const requestObj = {
-          securityObj: message.queryStringParameters || {}
+          securityObj: {}
         };
+
+        // if tenantId is in the query string
+        if (message.queryStringParameters?.tenantId) {
+          requestObj.securityObj.tenantId =
+            message.queryStringParameters.tenantId;
+        }
+
+        if (message.headers?.tenantId) {
+          requestObj.securityObj.tenantId = message.headers.tenantId;
+        }
+
+        if (message.headers?.tenant) {
+          requestObj.securityObj.tenantId = message.headers.tenant;
+        }
 
         // Add parameters to request object
         const pathResults = match(rPath)(path);
