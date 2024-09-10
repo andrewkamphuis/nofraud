@@ -25,6 +25,9 @@ Parameters:
     Type: String
   NoFraudApiUrl:
     Type: String
+  ForceDeploy:
+    Type: String
+    Default: False
 
 Resources:
   AppSecrets:
@@ -91,6 +94,7 @@ Resources:
           SENDGRID_API_KEY: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:sendgrid_api_key}}'
           NOFRAUD_API_URL: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:nofraud_api_url}}'
           SQS_IS_ENABLED: true
+          FORCE_DEPLOY: !Ref ForceDeploy
 
   SqsQueue:
     Type: AWS::SQS::Queue
