@@ -26,7 +26,7 @@ const getSyncText = (type) => {
       break;
     case 'Needs Review':
       syncText =
-        'This order needs review as NoFraud can not guarantee its legitimacy';
+        'This order needs review as NoFraud can not guarantee its legitimacy.';
       break;
     case 'Fail':
       syncText =
