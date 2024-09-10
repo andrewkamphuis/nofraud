@@ -3,7 +3,7 @@ import env from 'dotenv';
 // import pg from 'pg';
 import Sequelize from 'sequelize';
 
-env.config({ path: './.env' });
+env.config({ path: '../.env' });
 
 const retryConfig = {
   match: [
@@ -60,47 +60,10 @@ const config = {
         port: process.env.DB_PORT,
         retry: retryConfig
       }
-      // analyticDatabase: {
-      //   database: process.env.DB_NAME_ANALYTIC,
-      //   schema: process.env.DB_SCHEMA_ANALYTIC,
-      //   dialect: 'postgres',
-      //   dialectModule: pg,
-      //   standardConformingStrings: false,
-      //   dialectOptions: {
-      //     clientMinMessages: 'ignore'
-      //   },
-      //   logging: false,
-      //   host: process.env.DB_HOST_ANALYTIC,
-      //   port: 5439,
-      //   username: process.env.DB_USERNAME_ANALYTIC,
-      //   password: process.env.DB_PASSWORD_ANALYTIC
-      // }
     }
   },
   test: {
     databases: {
-      globalDatabase: {
-        database: process.env.DB_NAME_GLOBAL,
-        dialect: 'mysql',
-        dialectOptions: {
-          decimalNumbers: true,
-          charset: 'utf8mb4'
-        },
-
-        logging: false,
-        host: process.env.DB_WRITER_HOST_GLOBAL,
-        username: process.env.DB_USERNAME_GLOBAL,
-        password: process.env.DB_PASSWORD_GLOBAL,
-        pool: {
-          min: 1,
-          max: 1,
-          handleDisconnects: true,
-          acquire: 10000,
-          testOnBorrow: true
-        },
-        port: process.env.DB_PORT,
-        retry: retryConfigTest
-      },
       writerDatabase: {
         database: process.env.DB_NAME,
         dialect: 'mysql',
@@ -135,28 +98,6 @@ const config = {
   },
   testFull: {
     databases: {
-      globalDatabase: {
-        database: process.env.DB_NAME_GLOBAL,
-        dialect: 'mysql',
-        dialectOptions: {
-          decimalNumbers: true,
-          charset: 'utf8mb4'
-        },
-
-        logging: false,
-        host: process.env.DB_WRITER_HOST_GLOBAL,
-        username: process.env.DB_USERNAME_GLOBAL,
-        password: process.env.DB_PASSWORD_GLOBAL,
-        pool: {
-          min: 1,
-          max: 1,
-          handleDisconnects: true,
-          acquire: 10000,
-          testOnBorrow: true
-        },
-        port: process.env.DB_PORT,
-        retry: retryConfigTest
-      },
       writerDatabase: {
         database: process.env.DB_NAME,
         dialect: 'mysql',
@@ -213,7 +154,7 @@ const config = {
           charset: 'utf8mb4',
           multipleStatements: false
         },
-        logging: console.log,
+        logging: false,
         host: process.env.DB_WRITER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
@@ -228,7 +169,7 @@ const config = {
           charset: 'utf8mb4',
           multipleStatements: false
         },
-        logging: console.log,
+        logging: false,
         host: process.env.DB_READER_HOST,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,

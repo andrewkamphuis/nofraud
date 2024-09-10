@@ -8,7 +8,7 @@ import orderSyncAttempt from './app/main/orderSync/model/orderSyncAttempt.js';
 import orderSyncAttemptError from './app/main/orderSync/model/orderSyncAttemptError.js';
 import tenant from './app/main/tenant/model/tenant.js';
 
-const { writerDatabase, readerDatabase, globalDatabase, analyticDatabase } =
+const { writerDatabase, readerDatabase } =
   config[process.env.NODE_ENV].databases;
 
 export const sequelize = new Sequelize(
@@ -18,13 +18,6 @@ export const sequelize = new Sequelize(
   writerDatabase
 );
 sequelizeTransforms(sequelize);
-console.log(
-  '----------------writerDatabase',
-  writerDatabase,
-  sequelize,
-  process.env
-);
-
 export const sequelizeReader = new Sequelize(
   readerDatabase.database,
   readerDatabase.username,
@@ -32,33 +25,6 @@ export const sequelizeReader = new Sequelize(
   readerDatabase
 );
 sequelizeTransforms(sequelizeReader);
-
-let sequelizeAnalyticDatabase;
-try {
-  sequelizeAnalyticDatabase = new Sequelize(
-    analyticDatabase.database,
-    analyticDatabase.username,
-    analyticDatabase.password,
-    analyticDatabase
-  );
-  sequelizeTransforms(sequelizeAnalytic);
-} catch (err) {
-  // fail silently
-}
-export const sequelizeAnalytic = sequelizeAnalyticDatabase;
-
-let globalDb;
-if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'testFull') {
-  globalDb = new Sequelize(
-    globalDatabase.database,
-    globalDatabase.username,
-    globalDatabase.password,
-    globalDatabase
-  );
-  sequelizeTransforms(globalDb);
-}
-
-export const sequelizeGlobal = globalDb;
 
 const Models = {
   OrderSync: orderSync(sequelize, DataTypes),
