@@ -1,25 +1,40 @@
-import React from "react";
-import { Button } from "@commerce7/admin-ui";
-import { putVoid } from "../../../api/Order";
-import { orderIdFromUrl } from "../../../api/helpers";
+import React from 'react';
+import { Button } from '@commerce7/admin-ui';
+import { putVoid } from '../../../api/Order';
+import { orderIdFromUrl } from '../../../api/helpers';
+import { useState } from 'react';
 
-const Void = ({ isLoading, setIsLoading, setOrder }) => {
-  const onError = () => {
+const Void = ({ setOrder, setError, isDisabled, setIsDisabled }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const errorFunction = (error) => {
     setIsLoading(false);
+    setIsDisabled(false);
+    setError(error);
   };
 
-  const onSuccess = (data) => {
+  const successFunction = (data) => {
+    setError(null);
     setIsLoading(false);
+    setIsDisabled(false);
     setOrder(data);
   };
 
   const handleVoidSync = async () => {
+    setIsDisabled(true);
     setIsLoading(true);
-    await putVoid(orderIdFromUrl(), onSuccess, onError);
+    await putVoid(orderIdFromUrl(), successFunction, errorFunction);
   };
 
   return (
-    <Button size="small" onClick={handleVoidSync} loading={isLoading}>
+    <Button
+      startIcon="closeCircle"
+      size="small"
+      variant="secondary"
+      onClick={handleVoidSync}
+      loading={isLoading}
+      disabled={isDisabled}
+    >
       Void Sync
     </Button>
   );
