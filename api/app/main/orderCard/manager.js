@@ -2,7 +2,7 @@ import { OrderSyncManager } from '../orderSync/manager.js';
 
 export const get = async (tenantId, orderId) => {
   const response = {
-    // icon: 'https://atshealthcarereport.tfdapps.com/ats.svg',
+    icon: 'https://nofraud.tinygrape.co/NoFraud Bubble.png',
     subTitle: 'NOFRAUD',
     footer: ''
   };
