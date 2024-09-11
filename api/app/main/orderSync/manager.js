@@ -160,7 +160,7 @@ const attemptSyncWithNoFraud = async (securityObj, c7order) => {
 };
 
 const checkStatusWithNoFraud = async (securityObj, settings, c7order) => {
-  const url = `${process.env.NOFRAUD_API_URL}/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
+  const url = `https://portal-api.nofraud.com/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
   let response;
   try {
     const axiosResponse = await axios.get(url);
@@ -184,7 +184,7 @@ const cancelWithNoFraud = async (securityObj, transactionId) => {
     transaction_id: transactionId
   };
 
-  const url = `${process.env.NOFRAUD_API_URL}/api/v1/transaction-update/cancel-transaction`;
+  const url = 'https://portal-api.nofraud.com/api/v1/transaction-update/cancel-transaction';
   let response;
   try {
     await axios.post(url, payload);
@@ -342,15 +342,15 @@ const noFraudPayload = async (securityObj, settings, c7order) => {
       orderType: 'one-time'
     },
     billTo: {
-      firstName: billTo.firstName,
-      lastName: billTo.lastName,
-      company: billTo.company,
-      address: billTo.address,
-      city: billTo.city,
-      state: billTo.stateCode,
-      zip: billTo.zipCode,
-      country: billTo.countryCode,
-      phoneNumber: billTo.phone
+      firstName: c7order.billTo.firstName,
+      lastName: c7order.billTo.lastName,
+      company: c7order.billTo.company,
+      address: c7order.billTo.address,
+      city: c7order.billTo.city,
+      state: c7order.billTo.stateCode,
+      zip: c7order.billTo.zipCode,
+      country: c7order.billTo.countryCode,
+      phoneNumber: c7order.billTo.phone
     },
     shipTo: {
       firstName: shipTo.firstName,

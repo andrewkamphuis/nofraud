@@ -20,5 +20,4 @@ sam deploy \
     --region us-west-2 \
     --stack-name $APP_NAME \
     --template-file template.yml \
-    --parameter-overrides ApiDomainName=$API_DOMAIN_NAME HostedZoneId=$HOSTED_ZONE_ID C7ApiUrl=$C7_API_URL C7AppId=$C7_APP_ID C7AppSecret=$C7_APP_SECRET SendGridApiKey=$SENDGRID_API_KEY NoFraudApiUrl=$NOFRAUD_API_URL  \
-    --guided
+    --parameter-overrides ApiDomainName=$API_DOMAIN_NAME HostedZoneId=$HOSTED_ZONE_ID C7ApiUrl=$C7_API_URL C7AppId=$C7_APP_ID C7AppSecret=$C7_APP_SECRET SendGridApiKey=$SENDGRID_API_KEY NoFraudApiUrl=$NOFRAUD_API_URL
