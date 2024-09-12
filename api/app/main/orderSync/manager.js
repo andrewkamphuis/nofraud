@@ -208,7 +208,7 @@ const processNoFraudResponse = (axiosResponse) => {
     const response = {
       attemptDate: now.toISOString(),
       type: 'Pass',
-      transactionId: axiosResponse.data.transaction_id
+      transactionId: axiosResponse.data.id
       // errors: [{  message: error }]
     };
     return response;
@@ -217,7 +217,7 @@ const processNoFraudResponse = (axiosResponse) => {
     const response = {
       attemptDate: now.toISOString(),
       type: 'Fail',
-      transactionId: axiosResponse.data.transaction_id,
+      transactionId: axiosResponse.data.id,
       errors: [{ message: axiosResponse.data.message }]
     };
     return response;
@@ -226,7 +226,7 @@ const processNoFraudResponse = (axiosResponse) => {
     const response = {
       attemptDate: now.toISOString(),
       type: 'Needs Review',
-      transactionId: axiosResponse.data.transaction_id,
+      transactionId: axiosResponse.data.id,
       errors: [{ message: axiosResponse.data.message }]
     };
     return response;
@@ -585,7 +585,7 @@ const updateFromSync = async (securityObj, id, attempt) => {
     id,
     lastSyncAttemptDate: attempt.attemptDate,
     type: attempt.type,
-    transactionId: attempt.transaction_id
+    transactionId: attempt.id
   };
 
   orderSync = await update(securityObj, params);
