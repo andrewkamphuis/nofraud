@@ -53,6 +53,9 @@ const model = (sequelize, DataTypes) => {
     if (this.errors) {
       values.errors = this.errors.map((error) => error.toJSON());
     }
+    if (this.attempts) {
+      values.attempts = this.attempts.map((attempt) => attempt.toJSON());
+    }
     return values;
   };
   return OrderSync;

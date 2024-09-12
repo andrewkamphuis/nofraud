@@ -60,6 +60,8 @@ export const cancelAtNoFraud = async (securityObj, id, params) => {
     (attempt) => attempt.transactionId !== null
   );
 
+  console.log(orderSync);
+
   const { transactionId } = attemptWithTransactionId;
 
   // Attempt to sync order
@@ -160,7 +162,7 @@ const attemptSyncWithNoFraud = async (securityObj, c7order) => {
 };
 
 const checkStatusWithNoFraud = async (securityObj, settings, c7order) => {
-  const url = `https://portal-api.nofraud.com/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
+  const url = `${process.env.NOFRAUD_PORTAL_API_URL}/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
   let response;
   try {
     const axiosResponse = await axios.get(url);
@@ -184,7 +186,7 @@ const cancelWithNoFraud = async (securityObj, transactionId) => {
     transaction_id: transactionId
   };
 
-  const url = 'https://portal-api.nofraud.com/api/v1/transaction-update/cancel-transaction';
+  const url = `${process.env.NOFRAUD_PORTAL_API_URL}/api/v1/transaction-update/cancel-transaction`;
   let response;
   try {
     await axios.post(url, payload);

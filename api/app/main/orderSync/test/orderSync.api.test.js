@@ -29,11 +29,11 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
         .post(`/`)
         .reply(200, success())
         .persist();
-      nock(process.env.NOFRAUD_API_URL)
+      nock(process.env.NOFRAUD_PORTAL_API_URL)
         .get(/^\/status_by_invoice\/.+\/.+/)
         .reply(200, success())
         .persist();
-      nock(process.env.NOFRAUD_API_URL)
+      nock(process.env.NOFRAUD_PORTAL_API_URL)
         .post(`/api/v1/transaction-update/cancel-transaction`)
         .reply(200, cancel())
         .persist();
@@ -50,15 +50,16 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
       attempts: [
         {
           attemptDate: now.toISOString(),
+          type: 'Pass',
+          transactionId: '12345'
+        },
+        {
+          attemptDate: yesterday.toISOString(),
           type: 'Fail',
           errors: [
             { message: 'State Code Doesnt Exist' },
             { message: 'State Code Doesnt Exist' }
           ]
-        },
-        {
-          attemptDate: yesterday.toISOString(),
-          type: 'Fail'
         }
       ]
     };
@@ -114,7 +115,7 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     expect(payload.type).to.equal('Pass');
   });
 
-  it.only('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
+  it('should cancel at NoFraud  on /order-sync/:orderId/cancel PUT', async () => {
     const message = createRequest(
       global.headers,
       'PUT',
