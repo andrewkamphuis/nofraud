@@ -212,7 +212,7 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Fail',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note }]
+      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note || 'No detail available' }]
     };
     return response;
   }
@@ -221,7 +221,7 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Needs Review',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note  }]
+      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note || 'No detail available' }]
     };
     return response;
   }
@@ -231,7 +231,7 @@ const processNoFraudResponse = (axiosResponse) => {
 
 const processNoFraudErrorResponse = (axiosResponse) => {
   const now = new Date();
-  if ([403, 400, 500].includes(axiosResponse.status)) {
+  if ([400, 403, 404, 500].includes(axiosResponse.status)) {
     let error = 'Unknown server error';
     if (axiosResponse.status === 403) {
       error = 'Authentication failed to NoFraud';
