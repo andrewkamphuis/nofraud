@@ -160,8 +160,7 @@ const attemptSyncWithNoFraud = async (securityObj, c7order) => {
 };
 
 const checkStatusWithNoFraud = async (securityObj, settings, c7order) => {
-  // eslint-disable-next-line max-len
-  const url = `${process.env.NOFRAUD_PORTAL_API_URL}/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
+  const url = `${process.env.NOFRAUD_API_URL}/status_by_invoice/${settings.noFraudAPIToken}/${c7order.orderNumber}`;
   let response;
   try {
     const axiosResponse = await axios.get(url);
@@ -213,7 +212,7 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Fail',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data.message }]
+      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note }]
     };
     return response;
   }
@@ -222,7 +221,7 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Needs Review',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data.message }]
+      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note  }]
     };
     return response;
   }
@@ -236,6 +235,9 @@ const processNoFraudErrorResponse = (axiosResponse) => {
     let error = 'Unknown server error';
     if (axiosResponse.status === 403) {
       error = 'Authentication failed to NoFraud';
+    }
+    if (axiosResponse.status === 404) {
+      error = 'Transaction Not Found';
     }
     if (axiosResponse.status === 400) {
       error = axiosResponse.data.Errors?.[0];
