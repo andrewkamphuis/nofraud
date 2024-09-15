@@ -1,5 +1,3 @@
-import CustomError from '../../helpers/error.js';
-
 import { OrderSyncManager } from './manager.js';
 
 export const get = async (req) => {
@@ -27,7 +25,6 @@ export const checkStatus = async (req) => {
 };
 
 export const cancelAtNoFraud = async (req) => {
-  const params = req.body;
   const orderSync = await OrderSyncManager.cancelAtNoFraud(
     req.securityObj,
     req.params.orderId
@@ -39,17 +36,6 @@ export const webhook = async (req) => {
   const params = req.body;
   await OrderSyncManager.webhook(params);
   return { isSuccess: true };
-};
-
-const validate = (resultsArray) => {
-  if (resultsArray.length !== 0) {
-    throw new CustomError(
-      422,
-      'One or more elements is missing or invalid',
-      'validationError',
-      resultsArray
-    );
-  }
 };
 
 export * as orderSyncController from './controller.js';
