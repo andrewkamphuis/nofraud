@@ -23,11 +23,11 @@ const getSyncText = (type) => {
   let syncText = '';
   switch (type) {
     case 'Pass':
-      syncText = `The order  has been deemed low-risk, and can be processed.`;
+      syncText = `The order has been deemed low-risk, and can be fulfilled.`;
       break;
     case 'Needs Review':
       syncText =
-        'The transaction has high-risk characteristics but has the potential to be a valid transaction, and is reviewed by a NoFraud analyst. Orders in the Review status should not be processed until the results of the review are complete.';
+        'The transaction has high-risk characteristics but has the potential to be a valid transaction, and is reviewed by a NoFraud analyst. Orders in the Review status should not be fulfilled until the results of the review are complete.';
       break;
     case 'Fail':
       syncText =
@@ -63,7 +63,7 @@ const getBulletPoints = (type) => {
       <ul>
         <li>
           Automated fulfillment & fulfillment integrations: The order will pass
-          without interruptions into your fulfillment center, please void the
+          without interruptions into your fulfillment centre, please void the
           order immediately to avoid shipping the order out.
         </li>
       </ul>
