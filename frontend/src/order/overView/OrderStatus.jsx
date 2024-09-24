@@ -10,6 +10,7 @@ const OrderStatus = ({ order }) => {
     <>
       <Alert variant={getAlertVariant(order.type)}>
         <Text strong>{order.type}</Text> - {getSyncText(order.type)}
+        {getBulletPoints(order.type)}
       </Alert>
       <OrderAttempts order={order}></OrderAttempts>
     </>
@@ -22,21 +23,22 @@ const getSyncText = (type) => {
   let syncText = '';
   switch (type) {
     case 'Pass':
-      syncText = `This order has passed NoFraud's fraud detection and has been deemed a legitimate order.`;
+      syncText = `The order  has been deemed low-risk, and can be processed.`;
       break;
     case 'Needs Review':
       syncText =
-        'This order needs review as NoFraud can not guarantee its legitimacy.';
+        'The transaction has high-risk characteristics but has the potential to be a valid transaction, and is reviewed by a NoFraud analyst. Orders in the Review status should not be processed until the results of the review are complete.';
       break;
     case 'Fail':
       syncText =
-        'This order has failed NoFraud fraud detection  and has been deemed a illegitimate order.';
+        'The order has been deemed high-risk, and likely fraudulent. The order should be canceled and refunded.';
       break;
     case 'Cancelled':
       syncText = 'This order has been cancelled.';
       break;
     case 'Not Required':
-      syncText = 'This order does not require NoFraud verification.';
+      syncText =
+        'This order does not require NoFraud verification as it’s not a WEB channel order.';
       break;
     default:
       break;
@@ -53,4 +55,19 @@ const getAlertVariant = (type) => {
   }
   if (type === 'Needs Review') return 'warning';
   return 'default';
+};
+
+const getBulletPoints = (type) => {
+  if (type === 'Fail') {
+    return (
+      <ul>
+        <li>
+          Automated fulfillment & fulfillment integrations: The order will pass
+          without interruptions into your fulfillment center, please void the
+          order immediately to avoid shipping the order out.
+        </li>
+      </ul>
+    );
+  }
+  return null;
 };
