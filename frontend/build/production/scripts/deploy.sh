@@ -6,7 +6,7 @@ export AWS_SECRET_ACCESS_KEY=$(aws configure get production_apps.aws_secret_acce
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 # export envars
-export $(egrep -v '^#' ../.env | xargs)
+export $(egrep -v '^#' ../.env.production | xargs)
 echo $APP_NAME
 
 # Sync the dist folder to S3
