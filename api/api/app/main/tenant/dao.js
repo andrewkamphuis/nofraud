@@ -13,6 +13,18 @@ export const get = async (id) => {
   return tenant.toJSON();
 };
 
+export const getByNoFraudApiKey = async (noFraudApiKey) => {
+  const tenant = await Tenant.findOne({
+    where: { noFraudApiToken: noFraudApiKey }
+  });
+
+  if (!tenant) {
+    throw new CustomError(404, 'Tenant does not exist', 'notFound');
+  }
+
+  return tenant.toJSON();
+};
+
 // export const getWithSensitiveVariables = async (id) => {
 //   const tenant = await Tenant.findOne({
 //     where: { id }

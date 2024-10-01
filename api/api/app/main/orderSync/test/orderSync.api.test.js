@@ -7,7 +7,7 @@ import '../../../test/common';
 import { app } from '../../../../index.js';
 import { OrderSyncManager } from '../manager';
 
-import { cancel, success } from './noFraudSamples';
+import { cancel, success, fail } from './noFraudSamples';
 import { c7Order, settings, webhook } from './sample';
 
 describe('orderSync.api.test.js - Order Sync beta API', () => {
@@ -27,10 +27,6 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
         .persist();
       nock(process.env.NOFRAUD_API_URL)
         .post(`/`)
-        .reply(200, success())
-        .persist();
-      nock(process.env.NOFRAUD_PORTAL_API_URL)
-        .get(/^\/status_by_invoice\/.+\/.+/)
         .reply(200, success())
         .persist();
       nock(process.env.NOFRAUD_PORTAL_API_URL)
@@ -105,6 +101,9 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
   });
 
   it('should check status at NoFraud  on /order-sync/:orderId/status PUT', async () => {
+    nock(process.env.NOFRAUD_API_URL)
+      .get(/^\/status_by_invoice\/.+\/.+/)
+      .reply(200, success());
     const message = createRequest(
       global.headers,
       'PUT',
@@ -233,5 +232,60 @@ describe('orderSync.api.test.js - Order Sync beta API', () => {
     // expect(payload.type).to.equal('Sent To NoFraud');
     // expect(payload.attempts.length).to.equal(1);
     // expect(payload.attempts[0].errors.length).to.equal(0);
+  });
+
+  it('should listen for a success NoFraud webhook /order-sync/:noFraudApiKey/webhook POST', async () => {
+    nock(process.env.NOFRAUD_API_URL)
+      .get(/^\/status_by_invoice\/.+\/.+/)
+      .reply(200, success());
+
+    const noFraudApiKey = 'test';
+    let message = createRequest(
+      undefined,
+      'POST',
+      `/beta/order-sync/${noFraudApiKey}/webhook`,
+      undefined,
+      success()
+    );
+    let response = await app(message);
+    let payload = JSON.parse(response.body);
+    expect(payload.isSuccess).to.equal(true);
+
+    message = createRequest(
+      global.headers,
+      'GET',
+      `/beta/order-sync/${local.orderId}`
+    );
+    response = await app(message);
+    payload = JSON.parse(response.body);
+    expect(payload.type).to.equal('Pass');
+  });
+
+  it('should listen for a fail NoFraud webhook /order-sync/:noFraudApiKey/webhook POST', async () => {
+    if (process.env.NODE_ENV !== 'testFull') {
+      nock(process.env.NOFRAUD_API_URL)
+        .get(/^\/status_by_invoice\/.+\/.+/)
+        .reply(200, fail());
+    }
+    const noFraudApiKey = 'test';
+    let message = createRequest(
+      undefined,
+      'POST',
+      `/beta/order-sync/${noFraudApiKey}/webhook`,
+      undefined,
+      fail()
+    );
+    let response = await app(message);
+    let payload = JSON.parse(response.body);
+    expect(payload.isSuccess).to.equal(true);
+
+    message = createRequest(
+      global.headers,
+      'GET',
+      `/beta/order-sync/${local.orderId}`
+    );
+    response = await app(message);
+    payload = JSON.parse(response.body);
+    expect(payload.type).to.equal('Fail');
   });
 });
