@@ -26,7 +26,7 @@ export const deleteAll = async (securityObj) => {
   });
 };
 
-export const includeArray = () => {
+export const includeArray = (transactionId) => {
   const array = [
     {
       model: OrderSyncAttempt,
@@ -34,6 +34,9 @@ export const includeArray = () => {
       include: { model: OrderSyncAttemptError, as: 'errors' }
     }
   ];
+  if (transactionId) {
+    array.where = { transactionId };
+  }
 
   return array;
 };

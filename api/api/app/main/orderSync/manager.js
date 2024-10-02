@@ -93,6 +93,49 @@ export const webhookFromSQS = async (message) => {
   await sync(securityObj, orderId);
 };
 
+export const fraudStatusWebhook = async (noFraudApiKey, params) => {
+  const message = {
+    noFraudApiKey,
+    params,
+    messageId: uuidv4()
+  };
+  await sendToFifoQueue('orderSync', 'fraudStatusWebhookFromSQS', message);
+};
+
+export const fraudStatusWebhookFromSQS = async (message) => {
+  // Get tenantId from noFraudApiKey
+  const { noFraudApiKey, params } = message;
+  const tenant = await TenantManager.getTenantIdByNoFraudApiKey(noFraudApiKey);
+  const securityObj = { tenantId: tenant.id };
+
+  // Get C7 OrderId based on NoFraud transactionId
+  const c7Order = await DAO.getC7OrderIdByNoFraudTransactionId(
+    securityObj,
+    params.id
+  );
+  const id = c7Order.id;
+  const c7OrderId = c7Order.attempts[0].orderSyncId;
+
+  // Get order at C7
+  const c7order = await getCommerce7Order(securityObj.tenantId, c7OrderId);
+  // Attempt to sync order
+  const settings = await TenantManager.get(securityObj);
+  const attempt = await checkStatusWithNoFraud(securityObj, settings, c7order);
+  // Is order in our database
+
+  try {
+    let orderSync = await DAO.get(securityObj, id);
+    orderSync = updateFromSync(securityObj, id, attempt);
+    return orderSync;
+  } catch (err) {
+    if (err.statusCode === 404) {
+      const orderSync = createFromSync(securityObj, id, attempt);
+      return orderSync;
+    }
+    throw err;
+  }
+};
+
 const getCommerce7Order = async (tenantId, id) => {
   const url = `${process.env.C7_API_URL}/v1/order/${id}`;
   const response = await axios.get(url, axiosHeader(tenantId));
@@ -212,7 +255,14 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Fail',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note || 'No detail available' }]
+      errors: [
+        {
+          message:
+            axiosResponse.data?.message ||
+            axiosResponse.data?.note ||
+            'No detail available'
+        }
+      ]
     };
     return response;
   }
@@ -221,7 +271,14 @@ const processNoFraudResponse = (axiosResponse) => {
       attemptDate: now.toISOString(),
       type: 'Needs Review',
       transactionId: axiosResponse.data.id,
-      errors: [{ message: axiosResponse.data?.message || axiosResponse.data?.note || 'No detail available' }]
+      errors: [
+        {
+          message:
+            axiosResponse.data?.message ||
+            axiosResponse.data?.note ||
+            'No detail available'
+        }
+      ]
     };
     return response;
   }

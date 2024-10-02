@@ -21,6 +21,23 @@ export const get = async (securityObj, id) => {
   return orderSync.toJSON();
 };
 
+export const getC7OrderIdByNoFraudTransactionId = async (
+  securityObj,
+  transactionId
+) => {
+  const orderSync = await OrderSync.findOne({
+    where: { tenantId: securityObj.tenantId },
+    include: includeArray(transactionId),
+    order: orderArray()
+  });
+
+  if (!orderSync) {
+    throw new CustomError(404, 'Order Sync does not exist', 'notFound');
+  }
+
+  return orderSync.toJSON();
+};
+
 export const create = async (securityObj, params) => {
   params.tenantId = securityObj.tenantId;
   if (params.attempts) {

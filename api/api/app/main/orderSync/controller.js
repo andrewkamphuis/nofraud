@@ -38,4 +38,11 @@ export const webhook = async (req) => {
   return { isSuccess: true };
 };
 
+export const fraudStatusWebhook = async (req) => {
+  const params = req.body;
+  const { noFraudApiKey } = req.params;
+  await OrderSyncManager.fraudStatusWebhook(noFraudApiKey, params);
+  return { isSuccess: true };
+};
+
 export * as orderSyncController from './controller.js';

@@ -43,6 +43,11 @@ export const urlSwitch = async (message) => {
   route('PUT', '/beta/order-sync/:orderId/status', orderSync.checkStatus);
   route('PUT', '/beta/order-sync/:orderId/cancel', orderSync.cancelAtNoFraud);
   route('POST', '/beta/order-sync/webhook', orderSync.webhook);
+  route(
+    'POST',
+    '/beta/order-sync/:noFraudApiKey/webhook',
+    orderSync.fraudStatusWebhook
+  );
 
   // card for admin //
   route('GET', '/beta/order-card', orderCard.get);

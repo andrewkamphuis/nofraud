@@ -56,6 +56,18 @@ export const teantIfExists = async (securityObj) => {
   }
 };
 
+export const getTenantIdByNoFraudApiKey = async (noFraudApiKey) => {
+  try {
+    const tenant = await DAO.getByNoFraudApiKey(noFraudApiKey);
+    return tenant;
+  } catch (e) {
+    if (e.statusCode === 404) {
+      return null;
+    }
+    throw e;
+  }
+};
+
 export const uninstall = async (securityObj) => {
   const tenant = await DAO.update(securityObj.tenantId, { isInstalled: false });
   return tenant;
