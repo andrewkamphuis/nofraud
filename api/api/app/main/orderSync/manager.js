@@ -94,6 +94,7 @@ export const webhookFromSQS = async (message) => {
 };
 
 export const fraudStatusWebhook = async (noFraudApiKey, params) => {
+  console.log('----------------------------3', noFraudApiKey, params);
   const message = {
     noFraudApiKey,
     params,
@@ -103,10 +104,12 @@ export const fraudStatusWebhook = async (noFraudApiKey, params) => {
 };
 
 export const fraudStatusWebhookFromSQS = async (message) => {
+  console.log('----------------------------4', message);
   // Get tenantId from noFraudApiKey
   const { noFraudApiKey, params } = message;
   const tenant = await TenantManager.getTenantIdByNoFraudApiKey(noFraudApiKey);
   const securityObj = { tenantId: tenant.id };
+  console.log('----------------------------5', tenant, securityObj);
 
   // Get C7 OrderId based on NoFraud transactionId
   const c7Order = await DAO.getC7OrderIdByNoFraudTransactionId(
@@ -115,13 +118,17 @@ export const fraudStatusWebhookFromSQS = async (message) => {
   );
   const id = c7Order.id;
   const c7OrderId = c7Order.attempts[0].orderSyncId;
+  console.log('----------------------------6', c7OrderId);
 
   // Get order at C7
   const c7order = await getCommerce7Order(securityObj.tenantId, c7OrderId);
   // Attempt to sync order
   const settings = await TenantManager.get(securityObj);
+  console.log('----------------------------7', settings);
+
   const attempt = await checkStatusWithNoFraud(securityObj, settings, c7order);
   // Is order in our database
+  console.log('----------------------------8', attempt);
 
   try {
     let orderSync = await DAO.get(securityObj, id);

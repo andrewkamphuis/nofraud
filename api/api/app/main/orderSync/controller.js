@@ -39,6 +39,7 @@ export const webhook = async (req) => {
 };
 
 export const fraudStatusWebhook = async (req) => {
+  console.log('----------------------------2', req.params);
   const params = req.body;
   const { noFraudApiKey } = req.params;
   await OrderSyncManager.fraudStatusWebhook(noFraudApiKey, params);

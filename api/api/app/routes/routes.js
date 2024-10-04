@@ -8,6 +8,7 @@ import { tenantController as tenant } from '../main/tenant/controller.js';
 // eslint-disable-next-line import/prefer-default-export
 export const urlSwitch = async (message) => {
   const { httpMethod, path } = message;
+  console.log('------------------------1', httpMethod, path);
   if (httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
