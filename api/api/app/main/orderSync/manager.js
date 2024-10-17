@@ -409,25 +409,25 @@ const noFraudPayload = async (securityObj, settings, c7order) => {
       orderType: 'one-time'
     },
     billTo: {
-      firstName: billTo.firstName,
-      lastName: billTo.lastName,
-      company: billTo.company,
+      firstName: billTo.firstName || '',
+      lastName: billTo.lastName || '',
+      company: billTo.company || '',
       address: billTo.address,
-      city: billTo.city,
-      state: billTo.stateCode,
+      city: billTo.city || '',
+      state: billTo.stateCode || '',
       zip: billTo.zipCode,
-      country: billTo.countryCode,
-      phoneNumber: billTo.phone
+      country: billTo.countryCode || '',
+      phoneNumber: billTo.phone || ''
     },
     shipTo: {
-      firstName: shipTo.firstName,
-      lastName: shipTo.lastName,
-      company: shipTo.company,
+      firstName: shipTo.firstName || '',
+      lastName: shipTo.lastName || '',
+      company: shipTo.company || '',
       address: shipTo.address,
-      city: shipTo.city,
-      state: shipTo.stateCode,
-      zip: shipTo.zipCode,
-      country: shipTo.countryCode
+      city: shipTo.city || '',
+      state: shipTo.stateCode || '',
+      zip: shipTo.zipCode || '',
+      country: shipTo.countryCode || ''
     }
   };
 
