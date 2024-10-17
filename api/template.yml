@@ -30,6 +30,10 @@ Parameters:
   ForceDeploy:
     Type: String
     Default: False
+  AppApiUsername:
+    Type: String
+  AppApiPassword:
+    Type: String
 
 Resources:
   AppSecrets:
@@ -43,7 +47,9 @@ Resources:
         "c7_app_secret" : "${C7AppSecret}",
         "sendgrid_api_key" : "${SendGridApiKey}",
         "nofraud_api_url" : "${NoFraudApiUrl}",
-        "nofraud_portal_api_url" : "${NoFraudPortalApiUrl}"
+        "nofraud_portal_api_url" : "${NoFraudPortalApiUrl}",
+        "app_api_username" : "${AppApiUsername}",
+        "app_api_password" : "${AppApiPassword}"
         }'
   APP:
     Type: AWS::Serverless::Function
@@ -95,6 +101,8 @@ Resources:
           SENDGRID_API_KEY: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:sendgrid_api_key}}'
           NOFRAUD_API_URL: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:nofraud_api_url}}'
           NOFRAUD_PORTAL_API_URL: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:nofraud_portal_api_url}}'
+          APP_API_USERNAME: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:app_api_username}}'
+          APP_API_PASSWORD: !Sub '{{resolve:secretsmanager:/nofraud/env:SecretString:app_api_password}}'
           SQS_IS_ENABLED: true
           FORCE_DEPLOY: !Ref ForceDeploy
 
@@ -155,6 +163,82 @@ Resources:
         SecurityPolicy: TLS_1_2
         Route53:
           HostedZoneId: !Ref HostedZoneId
+
+  ScheduledTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: '/service-role/'
+      Policies:
+        - PolicyName: !Sub '${AWS::StackName}-eventbridge-api-destinations'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - events:InvokeApiDestination
+                Resource:
+                  - !GetAtt ScheduledTaskSyncApiEndpoint.Arn
+                  - !GetAtt ScheduledTaskMonitorApiEndpoint.Arn
+
+  ScheduledTaskConnection:
+    Type: AWS::Events::Connection
+    Properties:
+      Name: !Sub '${AWS::StackName}-ScheduledTaskConnection'
+      Description: ConnectionForScheduledTaskApi
+      AuthorizationType: BASIC
+      AuthParameters:
+        BasicAuthParameters:
+          Username: '{{resolve:secretsmanager:/nofraud/env:SecretString:app_api_password}}'
+          Password: '{{resolve:secretsmanager:/nofraud/env:SecretString:app_api_username}}'
+
+  ScheduledTaskSyncApiEndpoint:
+    Type: AWS::Events::ApiDestination
+    Properties:
+      ConnectionArn: !GetAtt ScheduledTaskConnection.Arn
+      Description: Scheduled Task Sync Api
+      HttpMethod: GET
+      InvocationEndpoint: !Sub '${ApiDomainName}/beta/scheduled-task/sync'
+      Name: !Sub '${AWS::StackName}-SyncApiEndpoint'
+
+  ScheduledTaskMonitorApiEndpoint:
+    Type: AWS::Events::ApiDestination
+    Properties:
+      ConnectionArn: !GetAtt ScheduledTaskConnection.Arn
+      Description: Scheduled Task Monitor Api
+      HttpMethod: GET
+      InvocationEndpoint: !Sub '${ApiDomainName}/beta/scheduled-task/monitor'
+      Name: !Sub '${AWS::StackName}-MonitorApiEndpoint'
+
+  ScheduledTaskSync:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'ExecuteScheduledTaskSync'
+      ScheduleExpression: 'rate(1 hour)'
+      State: 'ENABLED'
+      Targets:
+        - Id: scheduledtask-sync
+          Arn: !GetAtt ScheduledTaskSyncApiEndpoint.Arn
+          RoleArn: !GetAtt ScheduledTaskRole.Arn
+
+  ScheduledTaskMonitor:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'ExecuteScheduledTaskMonitor'
+      ScheduleExpression: 'cron(0 15 * * ? *)'
+      State: 'ENABLED'
+      Targets:
+        - Id: scheduledtask-monitor
+          Arn: !GetAtt ScheduledTaskMonitorApiEndpoint.Arn
+          RoleArn: !GetAtt ScheduledTaskRole.Arn
 
   # We could add this to handle API authorization, or just bake it into the index.js to handle the auth.
   # Auth:
